@@ -1,5 +1,12 @@
 [
   {
+    "slug": "steam-window-fix",
+    "title": "STEAM 窗口不显示及解决方案",
+    "date": "2026-05-17",
+    "summary": "记录一次 Steam 客户端窗口不显示的排查过程，根因是代理与登录状态冲突导致的渲染异常。",
+    "url": "/blog/posts/steam-window-fix.html"
+  },
+  {
     "slug": "hello-world",
     "title": "你好，世界！这是我的第一篇博客",
     "date": "2026-05-16",
