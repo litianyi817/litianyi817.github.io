@@ -89,6 +89,7 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: font-size 0.3s ease;
 }
 
 body {
@@ -100,6 +101,21 @@ body {
   background-image:
     radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.02) 0%, transparent 40%);
+  transition: background 0.4s ease, color 0.3s ease;
+}
+
+.site-nav,
+.site-nav.scrolled,
+.site-footer,
+.modal,
+.hero::before,
+.blog-card,
+.settings-panel,
+.note-item,
+.blog-item,
+.post-body pre,
+.post-body code {
+  transition: background 0.4s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 ::selection {
@@ -308,7 +324,8 @@ img { max-width: 100%; display: block; }
   justify-content: center;
   flex-wrap: wrap;
 }
-.hero-links a {
+.hero-links a,
+.hero-links button {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -316,7 +333,9 @@ img { max-width: 100%; display: block; }
   border-radius: 100px;
   font-size: 0.875rem;
   font-weight: 500;
+  font-family: var(--font-sans);
   transition: all 0.25s ease;
+  cursor: pointer;
 }
 .btn-primary {
   background: var(--text-primary);
@@ -327,6 +346,7 @@ img { max-width: 100%; display: block; }
   transform: translateY(-1px);
 }
 .btn-ghost {
+  background: transparent;
   border: 1px solid var(--border);
   color: var(--text-secondary) !important;
 }

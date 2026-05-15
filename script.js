@@ -101,8 +101,8 @@
     else if (h < 9)  msg = "早上好，新的一天  ☀️";
     else if (h < 12) msg = "上午好，精力充沛地开始吧";
     else if (h < 14) msg = "中午好，别忘了休息一下";
-    else if (h < 18) msg = "下午好";
-    else if (h < 22) msg = "晚上好";
+    else if (h < 18) msg = "下午好，喝杯茶继续前进  🍵";
+    else if (h < 22) msg = "晚上好，放松一下，享受属于自己的时间  🌆";
     else             msg = "夜深了，请注意休息  🌙";
     el.textContent = msg;
   })();
