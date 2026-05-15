@@ -63,7 +63,7 @@
   // ── Blog preview on home page ──
   const previewEl = document.getElementById("blogPreview");
   if (previewEl) {
-    fetch("/blog/posts.json")
+    fetch("/blog/posts.json?v=" + Date.now())
       .then(r => r.json())
       .then(posts => {
         const recent = posts.slice(0, 3);
@@ -85,7 +85,7 @@
   // ── Blog list page ──
   const blogListEl = document.getElementById("blogList");
   if (blogListEl) {
-    fetch("/blog/posts.json")
+    fetch("/blog/posts.json?v=" + Date.now())
       .then(r => r.json())
       .then(posts => {
         if (!posts.length) {
@@ -95,7 +95,8 @@
         const groups = {};
         posts.forEach(p => {
           const y = p.date.slice(0, 4);
-          (groups[y] ||= []).push(p);
+          if (!groups[y]) groups[y] = [];
+          groups[y].push(p);
         });
         blogListEl.innerHTML = Object.entries(groups)
           .sort(([a], [b]) => b - a)
@@ -117,7 +118,7 @@
   // ── Notes list page ──
   const notesListEl = document.getElementById("notesList");
   if (notesListEl) {
-    fetch("/notes/notes.json")
+    fetch("/notes/notes.json?v=" + Date.now())
       .then(r => r.json())
       .then(notes => {
         if (!notes.length) {
