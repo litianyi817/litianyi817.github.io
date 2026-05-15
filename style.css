@@ -102,6 +102,11 @@ body {
     radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.02) 0%, transparent 40%);
   transition: background 0.4s ease, color 0.3s ease;
+  animation: pageIn 0.5s ease;
+}
+@keyframes pageIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .site-nav,
@@ -178,8 +183,20 @@ img { max-width: 100%; display: block; }
   color: var(--text-secondary);
   letter-spacing: 0.02em;
   transition: color var(--transition);
+  position: relative;
 }
 .nav-links a:hover { color: var(--text-primary); }
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.25s ease;
+}
+.nav-links a:hover::after { width: 100%; }
 .nav-settings { position: relative; }
 .nav-settings-btn {
   background: none;
@@ -294,11 +311,7 @@ img { max-width: 100%; display: block; }
   color: var(--accent);
   margin-bottom: 1rem;
   letter-spacing: 0.04em;
-  opacity: 0;
-  animation: greetingIn 0.6s ease 0.2s forwards;
-}
-@keyframes greetingIn {
-  to { opacity: 1; }
+  animation: heroSlideUp 0.6s ease 0.1s both;
 }
 .hero h1 {
   font-size: clamp(2.5rem, 6vw, 4.5rem);
@@ -310,6 +323,7 @@ img { max-width: 100%; display: block; }
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: heroSlideUp 0.6s ease 0.25s both;
 }
 .hero .subtitle {
   font-size: 1.125rem;
@@ -317,12 +331,18 @@ img { max-width: 100%; display: block; }
   max-width: 480px;
   margin: 0 auto 2rem;
   line-height: 1.7;
+  animation: heroSlideUp 0.6s ease 0.4s both;
+}
+@keyframes heroSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .hero-links {
   display: flex;
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
+  animation: heroSlideUp 0.6s ease 0.55s both;
 }
 .hero-links a,
 .hero-links button {
@@ -516,10 +536,23 @@ img { max-width: 100%; display: block; }
 
 .fade-in {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(32px);
+  filter: blur(4px);
+  transition: opacity 0.7s ease, transform 0.7s ease, filter 0.7s ease;
 }
 .fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* Stagger children: parent gets .stagger-children, kids get .stagger-item */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.stagger-item.visible {
   opacity: 1;
   transform: translateY(0);
 }

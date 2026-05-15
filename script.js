@@ -4,7 +4,10 @@
   const footerEl = document.getElementById("footer");
 
   if (headerEl) fetch("/components/header.html").then(r => r.text()).then(h => headerEl.innerHTML = h);
-  if (footerEl) fetch("/components/footer.html").then(r => r.text()).then(h => footerEl.innerHTML = h);
+  if (footerEl) fetch("/components/footer.html").then(r => r.text()).then(function (h) {
+    footerEl.innerHTML = h;
+    observeStaggerItems();
+  });
 
   // ── Navigation scroll effect ──
   let navEl;
@@ -146,14 +149,34 @@
     });
   })();
 
-  // ── Fade-in animations ──
-  const fadeObserver = new IntersectionObserver(
-    entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+  // ── Fade-in + stagger animations ──
+  var fadeObserver = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add("visible"); });
     },
     { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
   );
-  document.querySelectorAll(".fade-in").forEach(el => fadeObserver.observe(el));
+  document.querySelectorAll(".fade-in").forEach(function (el) { fadeObserver.observe(el); });
+
+  var staggerObserver = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var delay = parseInt(entry.target.dataset.delay) || 0;
+          setTimeout(function () { entry.target.classList.add("visible"); }, delay);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: "0px 0px -30px 0px" }
+  );
+
+  function observeStaggerItems() {
+    document.querySelectorAll(".stagger-item:not(.stagger-observed)").forEach(function (el) {
+      el.classList.add("stagger-observed");
+      staggerObserver.observe(el);
+    });
+  }
+  observeStaggerItems();
 
   // ── Blog card hover effect ──
   function bindCardHover() {
@@ -175,14 +198,15 @@
       .then(posts => {
         const recent = posts.slice(0, 3);
         previewEl.innerHTML = recent
-          .map(p => `
-            <a class="blog-card" href="${p.url}">
+          .map(function (p, i) { return `
+            <a class="blog-card stagger-item" href="${p.url}" data-delay="${i * 120}">
               <div class="blog-card-date">${p.date}</div>
               <h3>${p.title}</h3>
               <p>${p.summary}</p>
-            </a>`)
+            </a>`; })
           .join("");
         bindCardHover();
+        observeStaggerItems();
       })
       .catch(() => {
         previewEl.innerHTML = '<p class="empty-state">还没有文章，敬请期待。</p>';
@@ -205,17 +229,22 @@
           if (!groups[y]) groups[y] = [];
           groups[y].push(p);
         });
+        var idx = 0;
         blogListEl.innerHTML = Object.entries(groups)
-          .sort(([a], [b]) => b - a)
-          .map(([year, items]) => `
-            <div class="blog-year">${year}</div>
-            ${items.map(p => `
-              <a class="blog-item" href="/blog/posts/${p.slug}.html">
-                <time>${p.date}</time>
-                <div class="blog-item-title">${p.title}</div>
-                <div class="blog-item-excerpt">${p.summary}</div>
-              </a>`).join("")}`)
+          .sort(function (a, b) { return b[0] - a[0]; })
+          .map(function (entry) {
+            var year = entry[0], items = entry[1];
+            return '<div class="blog-year stagger-item" data-delay="' + (idx++ * 60) + '">' + year + '</div>' +
+              items.map(function (p) {
+                return '<a class="blog-item stagger-item" data-delay="' + (idx++ * 60) + '" href="/blog/posts/' + p.slug + '.html">' +
+                  '<time>' + p.date + '</time>' +
+                  '<div class="blog-item-title">' + p.title + '</div>' +
+                  '<div class="blog-item-excerpt">' + p.summary + '</div>' +
+                '</a>';
+              }).join("");
+          })
           .join("");
+        observeStaggerItems();
       })
       .catch(() => {
         blogListEl.innerHTML = '<p class="empty-state">加载失败，请稍后重试。</p>';
@@ -233,13 +262,15 @@
           return;
         }
         notesListEl.innerHTML = notes
-          .map(n => `
-            <a class="note-item" href="${n.url}">
-              <time>${n.date}</time>
-              ${n.tag ? `<span class="note-item-tag">${n.tag}</span>` : ""}
-              <div class="note-item-title">${n.title}</div>
-            </a>`)
+          .map(function (n, i) {
+            return '<a class="note-item stagger-item" data-delay="' + (i * 80) + '" href="' + n.url + '">' +
+              '<time>' + n.date + '</time>' +
+              (n.tag ? '<span class="note-item-tag">' + n.tag + '</span>' : "") +
+              '<div class="note-item-title">' + n.title + '</div>' +
+            '</a>';
+          })
           .join("");
+        observeStaggerItems();
       })
       .catch(() => {
         notesListEl.innerHTML = '<p class="empty-state">加载失败，请稍后重试。</p>';
