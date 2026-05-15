@@ -4,7 +4,7 @@
     <ul class="nav-links" id="navLinks">
       <li><a href="/blog/">Blog</a></li>
       <li><a href="/notes/">Notes</a></li>
-      <li><a href="/#about">About</a></li>
+      <li><a href="#about" class="about-nav-link">About</a></li>
       <li class="nav-settings">
         <button id="settingsToggle" class="nav-settings-btn">Settings</button>
         <div class="settings-panel" id="settingsPanel">
@@ -21,6 +21,21 @@
               <button class="settings-option active" data-value="maple">MapleMono</button>
               <button class="settings-option" data-value="sans">Sans</button>
               <button class="settings-option" data-value="serif">Serif</button>
+            </div>
+          </div>
+          <div class="settings-group">
+            <span class="settings-label">Font Size</span>
+            <div class="settings-options" data-key="fsize">
+              <button class="settings-option" data-value="s">S</button>
+              <button class="settings-option active" data-value="m">M</button>
+              <button class="settings-option" data-value="l">L</button>
+            </div>
+          </div>
+          <div class="settings-group">
+            <span class="settings-label">Width</span>
+            <div class="settings-options" data-key="width">
+              <button class="settings-option active" data-value="std">Standard</button>
+              <button class="settings-option" data-value="wide">Wide</button>
             </div>
           </div>
         </div>

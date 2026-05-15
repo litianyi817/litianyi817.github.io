@@ -72,7 +72,7 @@
   }
 
   (function restoreSettings() {
-    ["theme", "font"].forEach(key => {
+    ["theme", "font", "fsize", "width"].forEach(function (key) {
       var saved;
       try { saved = localStorage.getItem("site_" + key); } catch (_) {}
       if (saved) {
@@ -86,6 +86,62 @@
             });
           }
         }
+      }
+    });
+  })();
+
+  // ── Time-based greeting ──
+
+  (function setGreeting() {
+    var el = document.getElementById("timeGreeting");
+    if (!el) return;
+    var h = new Date().getHours();
+    var msg;
+    if (h < 6)       msg = "夜深了，请注意休息  🌙";
+    else if (h < 9)  msg = "早上好，新的一天  ☀️";
+    else if (h < 12) msg = "上午好，精力充沛地开始吧";
+    else if (h < 14) msg = "中午好，别忘了休息一下";
+    else if (h < 18) msg = "下午好";
+    else if (h < 22) msg = "晚上好";
+    else             msg = "夜深了，请注意休息  🌙";
+    el.textContent = msg;
+  })();
+
+  // ── About modal ──
+
+  var aboutModal;
+  (function createAboutModal() {
+    aboutModal = document.createElement("div");
+    aboutModal.className = "modal-overlay";
+    aboutModal.id = "aboutModal";
+    aboutModal.innerHTML =
+      '<div class="modal">' +
+        '<button class="modal-close" id="aboutModalClose">&times;</button>' +
+        '<p class="section-label">About</p>' +
+        '<h2 class="section-title">关于我</h2>' +
+        '<div class="about-text">' +
+          '<p>你好，我是 Litianyi。一名对计算机技术充满热情的开发者。</p>' +
+          '<p>这里是我记录技术探索、项目实践和日常思考的空间。我相信写作是整理思绪最好的方式，也希望通过博客与更多志同道合的朋友交流。</p>' +
+          '<ul class="contact-list">' +
+            '<li><span class="contact-label">Phone</span>18688107446</li>' +
+            '<li><span class="contact-label">QQ Mail</span>2375141447@qq.com</li>' +
+            '<li><span class="contact-label">Gmail</span>lty2375141447@gmail.com</li>' +
+          '</ul>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(aboutModal);
+
+    function closeModal() { aboutModal.classList.remove("open"); }
+    document.getElementById("aboutModalClose").addEventListener("click", closeModal);
+    aboutModal.addEventListener("click", function (e) { if (e.target === aboutModal) closeModal(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeModal(); });
+
+    // Hook About nav links and hero button
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest(".about-nav-link, #aboutTrigger");
+      if (t) {
+        e.preventDefault();
+        aboutModal.classList.add("open");
       }
     });
   })();
