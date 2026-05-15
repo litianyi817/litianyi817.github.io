@@ -10,7 +10,7 @@
   --accent-dim: rgba(59, 130, 246, 0.15);
   --border: rgba(255, 255, 255, 0.08);
   --border-hover: rgba(255, 255, 255, 0.14);
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+  --font-sans: "MapleMono", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
   --content-width: 720px;
   --wide-width: 1100px;
@@ -24,6 +24,14 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "MapleMono";
+  src: url("/assets/MapleMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 html {
@@ -364,11 +372,34 @@ img { max-width: 100%; display: block; }
   transform: translateY(0);
 }
 
+/* ── Back link ── */
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  padding: 0.4rem 0;
+  transition: all 0.2s ease;
+}
+.back-link:hover {
+  color: var(--text-primary);
+  gap: 0.55rem;
+}
+.back-link svg { width: 14px; height: 14px; }
+
 /* ── Blog Page ── */
 
 .blog-header {
+  position: relative;
   padding: 8rem 2rem 4rem;
   text-align: center;
+}
+.blog-header .back-link {
+  position: absolute;
+  top: 5.5rem;
+  left: 2rem;
 }
 .blog-header h1 {
   font-size: clamp(2rem, 4vw, 3rem);
@@ -432,6 +463,9 @@ img { max-width: 100%; display: block; }
   max-width: var(--content-width);
   margin: 0 auto;
   padding: 8rem 2rem 4rem;
+}
+.post > .back-link {
+  margin-bottom: 2rem;
 }
 .post-header {
   margin-bottom: 3rem;
@@ -595,6 +629,7 @@ img { max-width: 100%; display: block; }
   .hero h1 { font-size: 2.25rem; }
   .section { padding: 4rem 1.25rem; }
   .post { padding: 6rem 1.25rem 3rem; }
+  .blog-header .back-link { top: 5rem; left: 1.25rem; }
   .footer-inner { flex-direction: column; text-align: center; }
 }
 

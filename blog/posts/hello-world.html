@@ -14,6 +14,11 @@
 
   <main>
     <article class="post">
+      <a href="/blog/" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        返回博客
+      </a>
+
       <header class="post-header">
         <time>2026-05-16</time>
         <h1>你好，世界！这是我的第一篇博客</h1>
@@ -22,39 +27,19 @@
           <span class="post-tag">网站</span>
         </div>
       </header>
-      <div class="post-body">
-        <p>欢迎来到我的个人网站！经过一番折腾，这个小小的空间终于上线了。</p>
 
-        <h2>为什么要搭建个人网站</h2>
-        <p>在这个社交媒体泛滥的时代，拥有一个完全属于自己的内容空间变得越来越重要。这里没有算法的干扰，没有流量的焦虑，只有纯粹的记录与分享。</p>
-        <p>我希望通过写作来整理自己的思路，把平时学习和实践中的收获沉淀下来。同时也期待能遇到志同道合的朋友，一起交流探讨。</p>
-
-        <h2>这个网站会有什么</h2>
-        <ul>
-          <li><strong>Blog</strong>：技术文章、项目复盘、学习笔记</li>
-          <li><strong>Notes</strong>：碎片化的记录，灵感闪现时的快速笔记</li>
-        </ul>
-
-        <h2>技术选型</h2>
-        <p>这个网站托管在 GitHub Pages 上，使用纯静态 HTML/CSS/JS 构建，没有任何框架依赖。选择这种方式的原因是：</p>
-        <ol>
-          <li>极致的加载速度</li>
-          <li>零维护成本</li>
-          <li>完全掌控每一个细节</li>
-          <li>GitHub Pages 提供免费的 HTTPS 和全球 CDN</li>
-        </ol>
-
-        <p>感谢你的到访，希望这里的内容对你有所帮助。如果你有任何想法或建议，欢迎发邮件给我：<a href="mailto:lty2375141447@gmail.com">lty2375141447@gmail.com</a></p>
-      </div>
-      <a href="/blog/" class="post-back">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        返回博客列表
-      </a>
+      <div class="post-body" id="postBody"></div>
     </article>
   </main>
 
   <div id="footer"></div>
 
+  <script src="/assets/marked.min.js"></script>
   <script src="/script.js"></script>
+  <script>
+    fetch("/blog/hello-world.md")
+      .then(r => r.text())
+      .then(md => { document.getElementById("postBody").innerHTML = marked.parse(md); });
+  </script>
 </body>
 </html>
