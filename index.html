@@ -3,14 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Litianyi - Personal Site</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="description" content="Litianyi - Personal site, blog, and notes on technology and more.">
+  <title>Litianyi</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>L</text></svg>">
 </head>
 <body>
+
+  <div id="header"></div>
+
   <main>
-    <h1>Hi, I'm Litianyi 👋</h1>
-    <p>Welcome to my personal website. More content coming soon.</p>
-    <p class="status">Site is live — 🟢</p>
+    <!-- Hero -->
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <h1>Hi, I'm Litianyi</h1>
+        <p class="subtitle">探索技术、记录思考、分享见解。这里是我的数字花园。</p>
+        <div class="hero-links">
+          <a href="/blog/" class="btn-primary">阅读博客</a>
+          <a href="#about" class="btn-ghost">了解更多</a>
+        </div>
+      </div>
+      <div class="scroll-indicator">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about">
+      <div class="container">
+        <p class="section-label">About</p>
+        <h2 class="section-title">关于我</h2>
+        <div class="about-text fade-in">
+          <p>你好，我是 Litianyi。一名对计算机技术充满热情的开发者。</p>
+          <p>这里是我记录技术探索、项目实践和日常思考的空间。我相信写作是整理思绪最好的方式，也希望通过博客与更多志同道合的朋友交流。</p>
+          <p>如果你有任何想法或建议，欢迎通过邮件联系我：<a href="mailto:lty2375141447@gmail.com">lty2375141447@gmail.com</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blog Preview -->
+    <section class="section" id="blog-preview">
+      <div class="container-wide">
+        <p class="section-label">Writing</p>
+        <h2 class="section-title">最新文章</h2>
+        <div class="blog-grid" id="blogPreview"></div>
+        <a href="/blog/" class="view-all">
+          查看全部文章
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </section>
   </main>
+
+  <div id="footer"></div>
+
+  <script src="/script.js"></script>
 </body>
 </html>
