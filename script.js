@@ -37,7 +37,58 @@
         if (!toggle.contains(e.target) && !links.contains(e.target)) links.classList.remove("open");
       });
     }
+
+    // ── Settings panel ──
+    const settingsToggle = document.getElementById("settingsToggle");
+    const settingsPanel = document.getElementById("settingsPanel");
+    if (settingsToggle && settingsPanel) {
+      settingsToggle.addEventListener("click", e => {
+        e.stopPropagation();
+        settingsPanel.classList.toggle("open");
+      });
+      document.addEventListener("click", e => {
+        if (!settingsPanel.contains(e.target) && e.target !== settingsToggle) {
+          settingsPanel.classList.remove("open");
+        }
+      });
+      settingsPanel.querySelectorAll(".settings-option").forEach(btn => {
+        btn.addEventListener("click", function () {
+          const group = this.parentElement;
+          const key = group.dataset.key;
+          const val = this.dataset.value;
+          group.querySelectorAll(".settings-option").forEach(b => b.classList.remove("active"));
+          this.classList.add("active");
+          applySetting(key, val);
+        });
+      });
+    }
   }
+
+  // ── Settings engine ──
+
+  function applySetting(key, val) {
+    document.documentElement.setAttribute("data-" + key, val);
+    try { localStorage.setItem("site_" + key, val); } catch (_) {}
+  }
+
+  (function restoreSettings() {
+    ["theme", "font"].forEach(key => {
+      var saved;
+      try { saved = localStorage.getItem("site_" + key); } catch (_) {}
+      if (saved) {
+        document.documentElement.setAttribute("data-" + key, saved);
+        var panel = document.getElementById("settingsPanel");
+        if (panel) {
+          var group = panel.querySelector('.settings-options[data-key="' + key + '"]');
+          if (group) {
+            group.querySelectorAll(".settings-option").forEach(function (b) {
+              b.classList.toggle("active", b.dataset.value === saved);
+            });
+          }
+        }
+      }
+    });
+  })();
 
   // ── Fade-in animations ──
   const fadeObserver = new IntersectionObserver(

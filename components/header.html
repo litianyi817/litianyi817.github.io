@@ -5,6 +5,26 @@
       <li><a href="/blog/">Blog</a></li>
       <li><a href="/notes/">Notes</a></li>
       <li><a href="/#about">About</a></li>
+      <li class="nav-settings">
+        <button id="settingsToggle" class="nav-settings-btn">Settings</button>
+        <div class="settings-panel" id="settingsPanel">
+          <div class="settings-group">
+            <span class="settings-label">Theme</span>
+            <div class="settings-options" data-key="theme">
+              <button class="settings-option active" data-value="dark">Dark</button>
+              <button class="settings-option" data-value="light">Light</button>
+            </div>
+          </div>
+          <div class="settings-group">
+            <span class="settings-label">Font</span>
+            <div class="settings-options" data-key="font">
+              <button class="settings-option active" data-value="maple">MapleMono</button>
+              <button class="settings-option" data-value="sans">Sans</button>
+              <button class="settings-option" data-value="serif">Serif</button>
+            </div>
+          </div>
+        </div>
+      </li>
     </ul>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
