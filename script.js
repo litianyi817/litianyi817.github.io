@@ -149,6 +149,70 @@
     });
   })();
 
+  // ── Like & Favorite ──
+
+  (function postActions() {
+    var btns = document.querySelectorAll(".post-action");
+    if (!btns.length) return;
+    btns.forEach(function (btn) {
+      var slug = btn.dataset.slug;
+      var action = btn.dataset.action;
+      var countEl = btn.querySelector(".post-action-count");
+
+      // Restore state
+      if (action === "like") {
+        var liked;
+        try { liked = localStorage.getItem("liked_" + slug); } catch (_) {}
+        if (liked) btn.classList.add("liked");
+        var count;
+        try { count = parseInt(localStorage.getItem("likes_" + slug)) || 0; } catch (_) { count = 0; }
+        if (countEl) countEl.textContent = count || "";
+      }
+      if (action === "fav") {
+        var faved;
+        try { faved = localStorage.getItem("faved_" + slug); } catch (_) {}
+        if (faved) btn.classList.add("favorited");
+      }
+
+      btn.addEventListener("click", function () {
+        if (action === "like") {
+          var liked = btn.classList.toggle("liked");
+          try { localStorage.setItem("liked_" + slug, liked ? "1" : ""); } catch (_) {}
+          var count;
+          try { count = (parseInt(localStorage.getItem("likes_" + slug)) || 0) + (liked ? 1 : -1); } catch (_) { count = 0; }
+          if (count < 0) count = 0;
+          try { localStorage.setItem("likes_" + slug, count); } catch (_) {}
+          if (countEl) countEl.textContent = count || "";
+        }
+        if (action === "fav") {
+          var faved = btn.classList.toggle("favorited");
+          try { localStorage.setItem("faved_" + slug, faved ? "1" : ""); } catch (_) {}
+        }
+      });
+    });
+  })();
+
+  // ── Hero mouse glow ──
+  (function heroGlow() {
+    var glow = document.getElementById("heroGlow");
+    if (!glow) return;
+    var hero = glow.parentElement;
+    var ticking = false;
+    hero.addEventListener("mousemove", function (e) {
+      if (!ticking) {
+        requestAnimationFrame(function () {
+          var r = hero.getBoundingClientRect();
+          glow.style.setProperty("--gx", ((e.clientX - r.left) / r.width * 100) + "%");
+          glow.style.setProperty("--gy", ((e.clientY - r.top) / r.height * 100) + "%");
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    hero.addEventListener("mouseenter", function () { glow.classList.add("active"); });
+    hero.addEventListener("mouseleave", function () { glow.classList.remove("active"); });
+  })();
+
   // ── Fade-in + stagger animations ──
   var fadeObserver = new IntersectionObserver(
     function (entries) {
@@ -200,7 +264,7 @@
         previewEl.innerHTML = recent
           .map(function (p, i) { return `
             <a class="blog-card stagger-item" href="${p.url}" data-delay="${i * 120}">
-              <div class="blog-card-date">${p.date}</div>
+              <div class="blog-card-date">${p.date + (p.time ? " " + p.time : "")}</div>
               <h3>${p.title}</h3>
               <p>${p.summary}</p>
             </a>`; })
@@ -237,7 +301,7 @@
             return '<div class="blog-year stagger-item" data-delay="' + (idx++ * 60) + '">' + year + '</div>' +
               items.map(function (p) {
                 return '<a class="blog-item stagger-item" data-delay="' + (idx++ * 60) + '" href="/blog/posts/' + p.slug + '.html">' +
-                  '<time>' + p.date + '</time>' +
+                  '<time>' + p.date + (p.time ? " " + p.time : "") + '</time>' +
                   '<div class="blog-item-title">' + p.title + '</div>' +
                   '<div class="blog-item-excerpt">' + p.summary + '</div>' +
                 '</a>';

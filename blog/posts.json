@@ -3,13 +3,15 @@
     "slug": "claude-code-deepseek-build-site",
     "title": "使用 Claude Code + DeepSeek v4 pro 搭建个人网站全记录",
     "date": "2026-05-16",
+    "time": "23:45",
     "summary": "记录使用 Claude Code CLI 搭配 DeepSeek v4 pro 模型从零搭建 GitHub Pages 个人网站的全过程，含设计系统、核心功能复盘与踩坑记录。",
     "url": "/blog/posts/claude-code-deepseek-build-site.html"
   },
   {
     "slug": "steam-window-fix",
     "title": "STEAM 窗口不显示及解决方案",
-    "date": "2026-05-17",
+    "date": "2026-05-16",
+    "time": "22:10",
     "summary": "记录一次 Steam 客户端窗口不显示的排查过程，根因是代理与登录状态冲突导致的渲染异常。",
     "url": "/blog/posts/steam-window-fix.html"
   },
@@ -17,6 +19,7 @@
     "slug": "hello-world",
     "title": "你好，世界！这是我的第一篇博客",
     "date": "2026-05-16",
+    "time": "01:30",
     "summary": "网站正式上线，聊聊搭建这个个人站点的初衷与计划。",
     "url": "/blog/posts/hello-world.html"
   }
