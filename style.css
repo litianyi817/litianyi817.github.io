@@ -41,8 +41,26 @@ html[data-theme="light"] body::before {
     radial-gradient(ellipse 100% 70% at 30% 40%, rgba(37, 99, 235, 0.15) 0%, transparent 55%),
     radial-gradient(ellipse 100% 70% at 70% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 55%);
 }
+html[data-theme="light"] .site-nav {
+  background: rgba(248, 248, 251, 0.5);
+}
 html[data-theme="light"] .site-nav.scrolled {
   background: rgba(248, 248, 251, 0.85);
+}
+html[data-theme="light"] .hero-content {
+  background: rgba(248, 248, 251, 0.45);
+}
+html[data-theme="light"] .about-text {
+  background: rgba(248, 248, 251, 0.45);
+}
+html[data-theme="light"] .blog-card {
+  background: rgba(248, 248, 251, 0.5);
+}
+html[data-theme="light"] .post {
+  background: rgba(248, 248, 251, 0.5);
+}
+html[data-theme="light"] .blog-header {
+  background: rgba(248, 248, 251, 0.45);
 }
 html[data-theme="light"] .btn-primary {
   background: var(--text-primary);
@@ -165,11 +183,14 @@ img { max-width: 100%; display: block; }
   right: 0;
   z-index: 100;
   padding: 1rem 2rem;
+  background: rgba(8, 8, 10, 0.35);
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
   transition: padding 0.3s ease, background 0.3s ease, backdrop-filter 0.3s ease;
 }
 .site-nav.scrolled {
   padding: 0.6rem 2rem;
-  background: rgba(8, 8, 10, 0.8);
+  background: rgba(8, 8, 10, 0.75);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   box-shadow: 0 1px 0 var(--border);
@@ -348,6 +369,12 @@ img { max-width: 100%; display: block; }
   position: relative;
   z-index: 1;
   max-width: var(--content-width);
+  background: rgba(8, 8, 10, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2rem;
 }
 .greeting {
   font-size: 0.875rem;
@@ -462,6 +489,14 @@ img { max-width: 100%; display: block; }
 
 /* ── About ── */
 
+.about-text {
+  background: rgba(8, 8, 10, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+}
 .about-text p {
   color: var(--text-secondary);
   font-size: 1.0625rem;
@@ -478,7 +513,9 @@ img { max-width: 100%; display: block; }
   gap: 1.25rem;
 }
 .blog-card {
-  background: var(--bg-card);
+  background: rgba(8, 8, 10, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 1.5rem;
@@ -623,6 +660,13 @@ img { max-width: 100%; display: block; }
   position: relative;
   padding: 8rem 2rem 4rem;
   text-align: center;
+  margin: 2rem auto 0;
+  max-width: var(--content-width);
+  background: rgba(8, 8, 10, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
 }
 .blog-header .back-link {
   position: absolute;
@@ -691,6 +735,13 @@ img { max-width: 100%; display: block; }
   max-width: var(--content-width);
   margin: 0 auto;
   padding: 8rem 2rem 4rem;
+  background: rgba(8, 8, 10, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 .post > .back-link {
   margin-bottom: 2rem;
