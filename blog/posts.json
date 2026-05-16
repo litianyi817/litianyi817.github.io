@@ -1,5 +1,12 @@
 [
   {
+    "slug": "claude-code-deepseek-build-site",
+    "title": "使用 Claude Code + DeepSeek v4 pro 搭建个人网站全记录",
+    "date": "2026-05-16",
+    "summary": "记录使用 Claude Code CLI 搭配 DeepSeek v4 pro 模型从零搭建 GitHub Pages 个人网站的全过程，含设计系统、核心功能复盘与踩坑记录。",
+    "url": "/blog/posts/claude-code-deepseek-build-site.html"
+  },
+  {
     "slug": "steam-window-fix",
     "title": "STEAM 窗口不显示及解决方案",
     "date": "2026-05-17",
