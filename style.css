@@ -35,11 +35,11 @@ html[data-theme="light"] {
   --border: rgba(0, 0, 0, 0.08);
   --border-hover: rgba(0, 0, 0, 0.14);
 }
-html[data-theme="light"] body {
-  background-image:
-    radial-gradient(ellipse 100% 70% at 30% 40%, rgba(37, 99, 235, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse 100% 70% at 70% 60%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
-  background-size: 100% 100%;
+html[data-theme="light"] body::before {
+  background:
+    url("/assets/bg.png") center / cover no-repeat,
+    radial-gradient(ellipse 100% 70% at 30% 40%, rgba(37, 99, 235, 0.15) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 70% at 70% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 55%);
 }
 html[data-theme="light"] .site-nav.scrolled {
   background: rgba(248, 248, 251, 0.85);
@@ -99,21 +99,28 @@ body {
   color: var(--text-primary);
   line-height: 1.7;
   font-size: 1rem;
-  background-image:
-    radial-gradient(ellipse 100% 70% at 30% 40%, rgba(59, 130, 246, 0.07) 0%, transparent 50%),
-    radial-gradient(ellipse 100% 70% at 70% 60%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
-  background-size: 100% 100%;
-  background-attachment: fixed;
+  position: relative;
   transition: background 0.4s ease, color 0.3s ease;
-  animation: pageIn 0.5s ease, bgShift 14s ease-in-out infinite alternate;
+  animation: pageIn 0.5s ease;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    url("/assets/bg.png") center / cover no-repeat,
+    radial-gradient(ellipse 100% 70% at 30% 40%, rgba(59, 130, 246, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 70% at 70% 60%, rgba(139, 92, 246, 0.08) 0%, transparent 55%);
+  animation: bgShift 14s ease-in-out infinite alternate;
 }
 @keyframes pageIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 @keyframes bgShift {
-  0%   { background-position: 0% 0%; }
-  100% { background-position: 100% 100%; }
+  0%   { background-position: center, 0% 0%, 0% 0%; }
+  100% { background-position: center, 100% 100%, 100% 100%; }
 }
 
 .site-nav,
