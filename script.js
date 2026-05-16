@@ -3,8 +3,8 @@
   const headerEl = document.getElementById("header");
   const footerEl = document.getElementById("footer");
 
-  if (headerEl) fetch("/components/header.html?v=7").then(r => r.text()).then(h => headerEl.innerHTML = h);
-  if (footerEl) fetch("/components/footer.html?v=7").then(r => r.text()).then(function (h) {
+  if (headerEl) fetch("/components/header.html?v=8").then(r => r.text()).then(h => headerEl.innerHTML = h);
+  if (footerEl) fetch("/components/footer.html?v=8").then(r => r.text()).then(function (h) {
     footerEl.innerHTML = h;
     observeStaggerItems();
   });
@@ -338,6 +338,33 @@
       })
       .catch(() => {
         notesListEl.innerHTML = '<p class="empty-state">加载失败，请稍后重试。</p>';
+      });
+  }
+
+  // ── Travel list page ──
+  const travelListEl = document.getElementById("travelList");
+  if (travelListEl) {
+    fetch("/travel/travels.json?v=" + Date.now())
+      .then(r => r.json())
+      .then(travels => {
+        if (!travels.length) {
+          travelListEl.innerHTML = '<p class="empty-state">还没有旅行记录，敬请期待。</p>';
+          return;
+        }
+        travelListEl.innerHTML = travels
+          .map(function (t, i) {
+            return '<a class="travel-item stagger-item" data-delay="' + (i * 80) + '" href="' + t.url + '">' +
+              '<time>' + t.date + '</time>' +
+              (t.location ? '<span class="travel-item-loc">' + t.location + '</span>' : "") +
+              '<div class="travel-item-title">' + t.title + '</div>' +
+              '<div class="travel-item-excerpt">' + t.summary + '</div>' +
+            '</a>';
+          })
+          .join("");
+        observeStaggerItems();
+      })
+      .catch(() => {
+        travelListEl.innerHTML = '<p class="empty-state">加载失败，请稍后重试。</p>';
       });
   }
 })();
