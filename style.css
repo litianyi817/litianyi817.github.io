@@ -663,15 +663,16 @@ img { max-width: 100%; display: block; }
 
 .blog-header {
   position: relative;
-  padding: 5rem 2rem 3rem;
+  padding: 2rem 2rem 2.5rem;
   text-align: center;
-  margin: 0 auto;
+  margin: 5rem auto 0;
   max-width: var(--content-width);
   background: rgba(8, 8, 10, 0.4);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-bottom: none;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 .blog-header .back-link {
   position: absolute;
@@ -690,7 +691,7 @@ img { max-width: 100%; display: block; }
 }
 .blog-list {
   max-width: var(--content-width);
-  margin: 0 auto;
+  margin: 0 auto 3rem;
   padding: 1.5rem 2rem 4rem;
   background: rgba(8, 8, 10, 0.35);
   backdrop-filter: blur(8px);
@@ -744,8 +745,8 @@ img { max-width: 100%; display: block; }
 
 .post {
   max-width: var(--content-width);
-  margin: 1.5rem auto;
-  padding: 5rem 2rem 4rem;
+  margin: 5rem auto 3rem;
+  padding: 2rem 2rem 4rem;
   background: rgba(8, 8, 10, 0.45);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -891,7 +892,7 @@ img { max-width: 100%; display: block; }
 
 .notes-list {
   max-width: var(--content-width);
-  margin: 0 auto;
+  margin: 0 auto 3rem;
   padding: 1.5rem 2rem 4rem;
   background: rgba(8, 8, 10, 0.35);
   backdrop-filter: blur(8px);
@@ -1079,7 +1080,7 @@ img { max-width: 100%; display: block; }
 
 .travel-list {
   max-width: var(--content-width);
-  margin: 0 auto;
+  margin: 0 auto 3rem;
   padding: 1.5rem 2rem 4rem;
   background: rgba(8, 8, 10, 0.35);
   backdrop-filter: blur(8px);
@@ -1165,8 +1166,10 @@ img { max-width: 100%; display: block; }
   .blog-grid { grid-template-columns: 1fr; }
   .hero h1 { font-size: 2.25rem; }
   .section { padding: 4rem 1.25rem; }
-  .post { padding: 4rem 1.25rem 3rem; margin: 1rem auto; }
+  .post { padding: 1.5rem 1.25rem 3rem; margin: 4rem auto 2rem; }
+  .blog-header { margin-top: 4rem; padding: 1.5rem 1.25rem 2rem; }
   .blog-header .back-link { top: 1.25rem; left: 1.25rem; }
+  .blog-list, .notes-list, .travel-list { padding: 1rem 1.25rem 3rem; }
   .footer-inner { flex-direction: column; text-align: center; }
 }
 
