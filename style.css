@@ -62,6 +62,11 @@ html[data-theme="light"] .post {
 html[data-theme="light"] .blog-header {
   background: rgba(248, 248, 251, 0.45);
 }
+html[data-theme="light"] .blog-list,
+html[data-theme="light"] .notes-list,
+html[data-theme="light"] .travel-list {
+  background: rgba(248, 248, 251, 0.4);
+}
 html[data-theme="light"] .btn-primary {
   background: var(--text-primary);
   color: var(--bg-primary) !important;
@@ -658,9 +663,9 @@ img { max-width: 100%; display: block; }
 
 .blog-header {
   position: relative;
-  padding: 8rem 2rem 4rem;
+  padding: 5rem 2rem 3rem;
   text-align: center;
-  margin: 2rem auto 0;
+  margin: 0 auto;
   max-width: var(--content-width);
   background: rgba(8, 8, 10, 0.4);
   backdrop-filter: blur(10px);
@@ -670,7 +675,7 @@ img { max-width: 100%; display: block; }
 }
 .blog-header .back-link {
   position: absolute;
-  top: 5.5rem;
+  top: 1.5rem;
   left: 2rem;
 }
 .blog-header h1 {
@@ -686,7 +691,13 @@ img { max-width: 100%; display: block; }
 .blog-list {
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: 0 2rem 6rem;
+  padding: 1.5rem 2rem 4rem;
+  background: rgba(8, 8, 10, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 .blog-year {
   font-size: 0.75rem;
@@ -733,15 +744,13 @@ img { max-width: 100%; display: block; }
 
 .post {
   max-width: var(--content-width);
-  margin: 0 auto;
-  padding: 8rem 2rem 4rem;
+  margin: 1.5rem auto;
+  padding: 5rem 2rem 4rem;
   background: rgba(8, 8, 10, 0.45);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  margin-top: 2rem;
-  margin-bottom: 2rem;
 }
 .post > .back-link {
   margin-bottom: 2rem;
@@ -883,7 +892,13 @@ img { max-width: 100%; display: block; }
 .notes-list {
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: 0 2rem 6rem;
+  padding: 1.5rem 2rem 4rem;
+  background: rgba(8, 8, 10, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 .note-item {
   display: block;
@@ -1065,7 +1080,13 @@ img { max-width: 100%; display: block; }
 .travel-list {
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: 0 2rem 6rem;
+  padding: 1.5rem 2rem 4rem;
+  background: rgba(8, 8, 10, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 .travel-item {
   display: block;
@@ -1144,8 +1165,8 @@ img { max-width: 100%; display: block; }
   .blog-grid { grid-template-columns: 1fr; }
   .hero h1 { font-size: 2.25rem; }
   .section { padding: 4rem 1.25rem; }
-  .post { padding: 6rem 1.25rem 3rem; }
-  .blog-header .back-link { top: 5rem; left: 1.25rem; }
+  .post { padding: 4rem 1.25rem 3rem; margin: 1rem auto; }
+  .blog-header .back-link { top: 1.25rem; left: 1.25rem; }
   .footer-inner { flex-direction: column; text-align: center; }
 }
 
