@@ -5,7 +5,7 @@
   --bg-card-hover: rgba(255, 255, 255, 0.06);
   --text-primary: #e4e4e7;
   --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
+  --text-muted: #8b8b95;
   --accent: #3b82f6;
   --accent-dim: rgba(59, 130, 246, 0.15);
   --border: rgba(255, 255, 255, 0.08);
@@ -64,6 +64,15 @@ html[data-theme="light"] .blog-header {
 }
 html[data-theme="light"] .glass-panel {
   background: rgba(248, 248, 251, 0.5);
+}
+html[data-theme="light"] .back-link,
+html[data-theme="light"] .post-back {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.1);
+}
+html[data-theme="light"] .back-link:hover,
+html[data-theme="light"] .post-back:hover {
+  background: rgba(0,0,0,0.08);
 }
 html[data-theme="light"] .btn-primary {
   background: var(--text-primary);
@@ -687,15 +696,19 @@ img { max-width: 100%; display: block; }
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   font-size: 0.8125rem;
-  color: var(--text-muted);
-  padding: 0.4rem 0;
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0.4rem 1rem;
   transition: all 0.2s ease;
 }
 .back-link:hover {
   color: var(--text-primary);
-  gap: 0.55rem;
+  background: rgba(255,255,255,0.1);
+  border-color: var(--border-hover);
 }
 .back-link svg { width: 14px; height: 14px; }
 
@@ -728,7 +741,7 @@ img { max-width: 100%; display: block; }
   margin-bottom: 0.5rem;
 }
 .glass-panel-header p {
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 1rem;
 }
 .glass-panel-body {
@@ -749,7 +762,7 @@ img { max-width: 100%; display: block; }
   margin-bottom: 0.5rem;
 }
 .blog-header p {
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 1rem;
 }
 .blog-year {
@@ -932,13 +945,21 @@ img { max-width: 100%; display: block; }
 .post-back {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   margin-top: 2rem;
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  transition: color var(--transition);
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0.4rem 1rem;
+  transition: all 0.2s ease;
 }
-.post-back:hover { color: var(--text-primary); }
+.post-back:hover {
+  color: var(--text-primary);
+  background: rgba(255,255,255,0.1);
+  border-color: var(--border-hover);
+}
 
 /* ── Notes Page ── */
 
