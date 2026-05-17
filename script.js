@@ -3,8 +3,8 @@
   const headerEl = document.getElementById("header");
   const footerEl = document.getElementById("footer");
 
-  if (headerEl) fetch("/components/header.html?v=13").then(r => r.text()).then(h => headerEl.innerHTML = h);
-  if (footerEl) fetch("/components/footer.html?v=13").then(r => r.text()).then(function (h) {
+  if (headerEl) fetch("/components/header.html?v=14").then(r => r.text()).then(h => headerEl.innerHTML = h);
+  if (footerEl) fetch("/components/footer.html?v=14").then(r => r.text()).then(function (h) {
     footerEl.innerHTML = h;
     observeStaggerItems();
   });
@@ -38,6 +38,22 @@
       toggle.addEventListener("click", () => links.classList.toggle("open"));
       document.addEventListener("click", e => {
         if (!toggle.contains(e.target) && !links.contains(e.target)) links.classList.remove("open");
+      });
+    }
+
+    // ── AI dropdown ──
+    const aiToggle = document.getElementById("aiToggle");
+    const aiPanel = document.getElementById("aiPanel");
+    if (aiToggle && aiPanel) {
+      aiToggle.addEventListener("click", e => {
+        e.stopPropagation();
+        aiPanel.classList.toggle("open");
+        if (settingsPanel) settingsPanel.classList.remove("open");
+      });
+      document.addEventListener("click", e => {
+        if (!aiPanel.contains(e.target) && e.target !== aiToggle) {
+          aiPanel.classList.remove("open");
+        }
       });
     }
 
