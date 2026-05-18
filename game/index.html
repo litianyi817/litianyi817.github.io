@@ -46,6 +46,14 @@
 </style>
 </head>
 <body>
+<div id="mobileWarn" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;padding:1rem">
+<div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:2rem;text-align:center;max-width:360px">
+<p style="font-size:1.5rem;margin-bottom:0.5rem">🖥</p>
+<p style="color:var(--text-primary);font-weight:600;margin-bottom:0.5rem">建议使用桌面端访问</p>
+<p style="color:var(--text-muted);font-size:0.8rem;line-height:1.6">星域征服为桌面端设计，在电脑上体验更佳。您仍可继续浏览，但界面可能显示不全。</p>
+<button onclick="this.parentElement.parentElement.remove()" style="margin-top:1rem;padding:0.5rem 2rem;background:var(--accent);border:none;border-radius:6px;color:#fff;cursor:pointer;font-family:var(--font-sans)">继续浏览</button>
+</div></div>
+<script>if(/Mobi|Android|iPhone/i.test(navigator.userAgent)){document.getElementById('mobileWarn').style.display='flex';}</script>
 <div id="header"></div>
 <main>
 <div class="glass-panel game-glass">
@@ -70,7 +78,7 @@
 
 <!-- Center: Star Map -->
 <div class="game-panel">
-<div class="star-map-wrap"><svg viewBox="0 0 600 480" id="starSvg"></svg></div>
+<div class="star-map-wrap"><svg viewBox="0 0 620 520" id="starSvg"></svg></div>
 <div style="margin-top:0.5rem;display:flex;gap:0.3rem;flex-wrap:wrap" id="actionBar"></div>
 </div>
 
@@ -105,14 +113,14 @@ var SHIPS = [
 
 // Planet data: x,y for SVG, output per turn
 var PLANETS = [
-  { id:"terra",  name:"母星 Terra",  x:300,y:380, mineral:10,gas:8,  owner:"player", ships:[], buildings:{shipyard:1} },
-  { id:"ferros", name:"矿星 Ferros", x:180,y:280, mineral:20,gas:3,  owner:"enemy", ships:[{type:"frigate",lv:1}], buildings:{} },
-  { id:"nebula", name:"气星 Nebula", x:420,y:270, mineral:5, gas:18, owner:"enemy", ships:[{type:"frigate",lv:2}], buildings:{} },
-  { id:"gemin",  name:"双星 Gemin",  x:130,y:160, mineral:12,gas:12, owner:"enemy", ships:[{type:"cruiser",lv:1}], buildings:{} },
-  { id:"umbra",  name:"暗星 Umbra",  x:300,y:130, mineral:15,gas:10, owner:"enemy", ships:[{type:"frigate",lv:3},{type:"frigate",lv:1}], buildings:{} },
-  { id:"cryos",  name:"冰星 Cryos",  x:470,y:150, mineral:8, gas:15, owner:"enemy", ships:[{type:"cruiser",lv:2}], buildings:{} },
-  { id:"pyros",  name:"火星 Pyros",  x:80, y:60,  mineral:18,gas:5,  owner:"enemy", ships:[{type:"battleship",lv:1}], buildings:{} },
-  { id:"lumin",  name:"光星 Lumin",  x:500,y:70,  mineral:10,gas:10, owner:"enemy", ships:[{type:"cruiser",lv:2},{type:"frigate",lv:2}], buildings:{} }
+  { id:"terra",  name:"母星 Terra",  desc:"家园·双子星环", x:300,y:430, mineral:10,gas:8,  owner:"player", ships:[], buildings:{shipyard:1}, enemyPow:0 },
+  { id:"ferros", name:"熔岩星 Ferros", desc:"活火山·熔岩海", x:180,y:320, mineral:20,gas:3,  owner:"enemy", ships:[{type:"frigate",lv:1}], buildings:{}, enemyPow:15 },
+  { id:"nebula", name:"星云站 Nebula", desc:"紫色星云·气态巨行星", x:440,y:310, mineral:5, gas:18, owner:"enemy", ships:[{type:"frigate",lv:2}], buildings:{}, enemyPow:25 },
+  { id:"gemin",  name:"双子星 Binary", desc:"双恒星系统·引力漩涡", x:130,y:200, mineral:12,gas:12, owner:"enemy", ships:[{type:"cruiser",lv:1}], buildings:{}, enemyPow:50 },
+  { id:"umbra",  name:"暗物质区 Umbra", desc:"微型黑洞·暗物质云", x:300,y:160, mineral:15,gas:10, owner:"enemy", ships:[{type:"frigate",lv:3},{type:"frigate",lv:1}], buildings:{}, enemyPow:65 },
+  { id:"cryos",  name:"冰环带 Cryos",  desc:"冰晶光环·绝对零度", x:490,y:180, mineral:8, gas:15, owner:"enemy", ships:[{type:"cruiser",lv:2}], buildings:{}, enemyPow:80 },
+  { id:"pyros",  name:"黑洞边缘 Horizon", desc:"事件视界·时空扭曲", x:70,y:70, mineral:18,gas:5, owner:"enemy", ships:[{type:"battleship",lv:1}], buildings:{}, enemyPow:120 },
+  { id:"lumin",  name:"星环之光 Lumin", desc:"超新星遗迹·离子环", x:520,y:80, mineral:10,gas:10, owner:"enemy", ships:[{type:"cruiser",lv:2},{type:"frigate",lv:2}], buildings:{}, enemyPow:110 }
 ];
 
 var CONNECTIONS = [
@@ -122,10 +130,10 @@ var CONNECTIONS = [
 ];
 
 var DOCTRINES = {
-  a:{ name:"铁壁防线", desc:"护卫舰战力+40%", costM:30,costG:20, reqCmd:1, affects:"frigate", bonus:0.4 },
-  b:{ name:"雷霆突击", desc:"巡洋舰战力+40%", costM:30,costG:20, reqCmd:1, affects:"cruiser", bonus:0.4 },
-  c:{ name:"均衡舰队", desc:"护卫+巡洋战力+20%", costM:50,costG:35, reqCmd:1, affects:"both", bonus:0.2 },
-  d:{ name:"泰坦之怒", desc:"战列舰战力+50%", costM:60,costG:45, reqCmd:2, affects:"battleship", bonus:0.5 }
+  a:{ name:"铁壁防线", desc:"护卫舰战力+20%", costM:30,costG:20, reqCmd:1, affects:"frigate", bonus:0.2 },
+  b:{ name:"雷霆突击", desc:"巡洋舰战力+20%", costM:30,costG:20, reqCmd:1, affects:"cruiser", bonus:0.2 },
+  c:{ name:"均衡舰队", desc:"护卫+巡洋战力+10%", costM:50,costG:35, reqCmd:1, affects:"both", bonus:0.1 },
+  d:{ name:"泰坦之怒", desc:"战列舰战力+25%", costM:60,costG:45, reqCmd:2, affects:"battleship", bonus:0.25 }
 };
 
 var GS = {
@@ -140,15 +148,17 @@ function shipPower(ship) {
   var s = SHIPS.find(function(x){return x.id===ship.type;});
   if (!s) return 0;
   var lv = ship.lv || 1;
-  var pow = s.basePow * (1 + (lv-1)*0.5);
-  // Research bonus
+  var pow = s.basePow * (1 + (lv-1)*0.3);
   pow *= (1 + GS.research * 0.05);
-  // Doctrine bonus
   GS.doctrines.forEach(function(did){
     var d = DOCTRINES[did];
     if (d.affects===ship.type || (d.affects==="both" && (ship.type==="frigate"||ship.type==="cruiser"))) pow *= (1+d.bonus);
   });
   return Math.floor(pow);
+}
+
+function enemyDefense(p) {
+  return p.enemyPow || totalFleetPower(p.ships);
 }
 
 function totalFleetPower(fleet) {
@@ -177,8 +187,9 @@ function renderStarMap() {
     var lx = p.x+12, ly = p.y-6;
     if (p.id==="cryos"||p.id==="lumin"){ lx=p.x-10; ly=p.y+16; }
     h += '<text x="'+lx+'" y="'+ly+'" class="planet-label" '+(p.id==="cryos"||p.id==="lumin"?'text-anchor="end"':'')+'>'+p.name.split(" ")[0]+'</text>';
-    h += '<text x="'+lx+'" y="'+(ly+12)+'" class="planet-output">⛏'+p.mineral+' 💨'+p.gas+'</text>';
-    var pwr = totalFleetPower(p.ships);
+    h += '<text x="'+lx+'" y="'+(ly+12)+'" class="planet-output">'+p.desc+'</text>';
+    h += '<text x="'+lx+'" y="'+(ly+24)+'" class="planet-output">⛏'+p.mineral+' 💨'+p.gas+'</text>';
+    var pwr = p.owner==="enemy" ? enemyDefense(p) : totalFleetPower(p.ships);
     if (pwr>0) h += '<text x="'+(p.x)+'" y="'+(p.y+22)+'" text-anchor="middle" class="planet-output" fill="var(--accent)">⚔'+pwr+'</text>';
   });
   document.getElementById("starSvg").innerHTML = h;
@@ -210,12 +221,17 @@ function renderResources() {
 }
 
 function renderFleet() {
-  var groups = {}; GS.fleet.forEach(function(s){ var k=s.type+"|"+s.lv; if(!groups[k]) groups[k]={type:s.type,lv:s.lv,count:0}; groups[k].count++; });
+  var groups = {}; GS.fleet.forEach(function(s,idx){ s._idx=idx; var k=s.type+"|"+s.lv; if(!groups[k]) groups[k]={type:s.type,lv:s.lv,count:0,items:[]}; groups[k].count++; groups[k].items.push(s); });
   var h="", count=0;
   Object.values(groups).forEach(function(g){
     var s = SHIPS.find(function(x){return x.id===g.type;});
     var pow = shipPower({type:g.type,lv:g.lv});
-    h += '<div class="ship-row" style="display:flex;justify-content:space-between;font-size:0.68rem;padding:0.2rem 0;border-bottom:1px solid var(--border)"><span><span class="'+LVL_COLORS[g.lv]+'">'+LVL_NAMES[g.lv]+'</span> '+s.name+' x'+g.count+'</span><span>⚔'+pow+'</span></div>';
+    var lvCls = LVL_BG[g.lv];
+    h += '<div class="ship-row" style="display:flex;align-items:center;justify-content:space-between;font-size:0.68rem;padding:0.25rem 0;border-bottom:1px solid var(--border)">';
+    h += '<span style="display:flex;align-items:center;gap:0.3rem"><span class="'+lvCls+'" style="display:inline-block;width:14px;height:14px;border-radius:3px;border:1px solid var(--border)"></span>'+s.name+' x'+g.count+'</span>';
+    h += '<span>⚔'+pow+'</span>';
+    h += '<button class="game-btn small" style="margin:0" onclick="upgradeShip('+g.items[0]._idx+')" '+(GS.mineral>=s.costM&&GS.gas>=s.costG&&g.lv<7?'':'disabled')+'>⬆L'+(g.lv+1)+'</button>';
+    h += '</div>';
     count += g.count;
   });
   document.getElementById("fleetCount").textContent = count;
@@ -235,8 +251,6 @@ function renderBuildOptions() {
   document.getElementById("buildOptions").innerHTML = h;
 }
 
-var arsenalSpeed = function(){ return 1 + GS.arsenal * 0.1; };
-
 function buildShip(typeId) {
   var s = SHIPS.find(function(x){return x.id===typeId;});
   if (!s || GS.mineral<s.costM || GS.gas<s.costG) return;
@@ -251,7 +265,7 @@ function renderActionBar() {
   if (!GS.selectedPlanet) { document.getElementById("actionBar").innerHTML = ""; return; }
   var p = pmap[GS.selectedPlanet];
   var connected = CONNECTIONS.some(function(c){ return (c[0]===GS.selectedPlanet||c[1]===GS.selectedPlanet) && (pmap[c[0]].owner==="player"||pmap[c[1]].owner==="player"); });
-  if (p.owner==="enemy" && connected) h += '<button class="game-btn primary" onclick="attackPlanet(\''+p.id+'\')">⚔ 攻击 (战力 '+totalFleetPower(p.ships)+')</button>';
+  if (p.owner==="enemy" && connected) h += '<button class="game-btn primary" onclick="attackPlanet(\''+p.id+'\')">⚔ 攻击 (守军 '+enemyDefense(p)+')</button>';
   if (p.owner===null && connected) h += '<button class="game-btn" onclick="deployFleet(\''+p.id+'\')">🚀 部署舰队</button>';
   if (p.owner==="player" && p.id!=="terra") h += '<button class="game-btn" onclick="recallFleet(\''+p.id+'\')">↩ 召回舰队</button>';
   if (connected && (p.owner===null||p.owner==="enemy")) h += '<button class="game-btn danger" onclick="probePlanet(\''+p.id+'\')">🔍 侦察</button>';
@@ -261,7 +275,7 @@ function renderActionBar() {
 function attackPlanet(pid) {
   var p = pmap[pid];
   var atkPow = totalFleetPower(GS.fleet);
-  var defPow = totalFleetPower(p.ships);
+  var defPow = enemyDefense(p);
   if (atkPow > defPow) {
     var loss = Math.floor(Math.random() * Math.min(3, GS.fleet.length)) + 1;
     for (var i=0;i<loss;i++){ var idx=Math.floor(Math.random()*GS.fleet.length); GS.fleet.splice(idx,1); }
@@ -301,7 +315,18 @@ function recallFleet(pid) {
 
 function probePlanet(pid) {
   var p = pmap[pid];
-  addLog("🔍 侦察 "+p.name+"：驻军 "+p.ships.length+" 艘，战力 "+totalFleetPower(p.ships)+"，⛏"+p.mineral+" 💨"+p.gas);
+  addLog("🔍 侦察 "+p.name+"："+p.desc+"，守军战力 "+enemyDefense(p)+"，⛏"+p.mineral+" 💨"+p.gas);
+}
+
+function upgradeShip(idx) {
+  var s = GS.fleet[idx];
+  if (!s || s.lv >= 7) return;
+  var st = SHIPS.find(function(x){return x.id===s.type;});
+  if (GS.mineral < st.costM || GS.gas < st.costG) { addLog("资源不足！"); return; }
+  GS.mineral -= st.costM; GS.gas -= st.costG;
+  s.lv++;
+  addLog("⬆ 升级 1 艘 "+st.name+" 至 <span class='"+LVL_COLORS[s.lv]+"'>"+LVL_NAMES[s.lv]+"</span> (-⛏"+st.costM+" -💨"+st.costG+")");
+  renderAll();
 }
 
 function renderInfo() {
@@ -314,11 +339,11 @@ function renderInfo() {
   }).join("<br>") || "无";
   var buildings = [];
   if (p.buildings.shipyard) buildings.push("造船厂 L"+p.buildings.shipyard);
-  if (p.buildings.arsenal) buildings.push("兵工厂 L"+p.buildings.arsenal);
+  if (p.buildings.factory) buildings.push("工厂 L"+p.buildings.factory);
   if (p.buildings.research) buildings.push("研究所 L"+p.buildings.research);
   if (p.buildings.command) buildings.push("指挥部 L"+p.buildings.command);
   document.getElementById("infoContent").innerHTML =
-    "<strong>"+p.name+"</strong><br>状态："+own+"<br>产出：⛏"+p.mineral+" 💨"+p.gas+"/回合<br>建筑："+(buildings.join("、")||"无")+"<br>驻军：<br>"+fleets;
+    "<strong>"+p.name+"</strong><br>"+p.desc+"<br>状态："+own+"<br>产出：⛏"+p.mineral+" 💨"+p.gas+"/回合"+(p.owner==="enemy"?"<br>守军战力：⚔"+enemyDefense(p):"")+"<br>建筑："+(buildings.join("、")||"无")+"<br>驻军：<br>"+fleets;
 }
 
 function renderBuildPanel() {
@@ -328,9 +353,9 @@ function renderBuildPanel() {
   var h = "";
   var syLv = p.buildings.shipyard || 0;
   if (syLv < 3) h += '<button class="game-btn small" onclick="upgradeBuilding(\''+p.id+'\',\'shipyard\')">🔧 升级造船厂 L'+(syLv+1)+' ⛏'+(15+syLv*10)+' 💨'+(10+syLv*8)+'</button>';
-  var arLv = p.buildings.arsenal || 0;
-  if (arLv < 10) h += '<button class="game-btn small" onclick="upgradeBuilding(\''+p.id+'\',\'arsenal\')">🏭 升级兵工厂 L'+(arLv+1)+' ⛏'+(10+arLv*5)+' 💨'+(5+arLv*3)+'</button>';
-  else h += '<div style="font-size:0.65rem;color:var(--text-muted)">兵工厂已满级</div>';
+  var arLv = p.buildings.factory || 0;
+  if (arLv < 10) h += '<button class="game-btn small" onclick="upgradeBuilding(\''+p.id+'\',\'factory\')">🏭 升级工厂 L'+(arLv+1)+' (+'+(arLv+1)*10+'%资源) ⛏'+(10+arLv*5)+' 💨'+(5+arLv*3)+'</button>';
+  else h += '<div style="font-size:0.65rem;color:var(--text-muted)">工厂已满级</div>';
   var reLv = p.buildings.research || 0;
   if (reLv < 10) h += '<button class="game-btn small" onclick="upgradeBuilding(\''+p.id+'\',\'research\')">🔬 升级研究所 L'+(reLv+1)+' ⛏'+(12+reLv*8)+' 💨'+(15+reLv*8)+'</button>';
   else h += '<div style="font-size:0.65rem;color:var(--text-muted)">研究所已满级</div>';
@@ -338,11 +363,13 @@ function renderBuildPanel() {
   if (cmdLv < 2) h += '<button class="game-btn small" onclick="upgradeBuilding(\''+p.id+'\',\'command\')">🎖 升级指挥部 L'+(cmdLv+1)+' ⛏'+(20+cmdLv*15)+' 💨'+(15+cmdLv*12)+'</button>';
   else h += '<div style="font-size:0.65rem;color:var(--text-muted)">指挥部已满级</div>';
 
-  // Doctrine research
+  // Doctrine research (L1: mutually exclusive a/b/c)
   if ((p.buildings.command||0) >= 1) {
-    h += '<div class="section-title-sm">可研究学说</div>';
+    h += '<div class="section-title-sm">可研究学说 (L1三选一)</div>';
+    var hasL1 = GS.doctrines.indexOf("a")>=0 || GS.doctrines.indexOf("b")>=0 || GS.doctrines.indexOf("c")>=0;
     ["a","b","c"].forEach(function(did){
-      if (GS.doctrines.indexOf(did)>=0) return;
+      if (GS.doctrines.indexOf(did)>=0) { h += '<div style="font-size:0.65rem;color:#4ade80">✅ '+DOCTRINES[did].name+'</div>'; return; }
+      if (hasL1) return;
       var d = DOCTRINES[did];
       var afford = GS.mineral>=d.costM && GS.gas>=d.costG;
       h += '<button class="game-btn small" onclick="researchDoctrine(\''+did+'\')" '+(afford?'':'disabled')+'>📖 '+d.name+'：'+d.desc+' ⛏'+d.costM+' 💨'+d.costG+'</button>';
@@ -361,14 +388,14 @@ function renderBuildPanel() {
 function upgradeBuilding(pid, btype) {
   var p = pmap[pid];
   var lv = p.buildings[btype] || 0;
-  var costs = { shipyard:[15+lv*10,10+lv*8], arsenal:[10+lv*5,5+lv*3], research:[12+lv*8,15+lv*8], command:[20+lv*15,15+lv*12] };
+  var costs = { shipyard:[15+lv*10,10+lv*8], factory:[10+lv*5,5+lv*3], research:[12+lv*8,15+lv*8], command:[20+lv*15,15+lv*12] };
   var c = costs[btype];
   if (GS.mineral < c[0] || GS.gas < c[1]) { addLog("资源不足！"); return; }
   GS.mineral -= c[0]; GS.gas -= c[1];
   p.buildings[btype] = lv + 1;
-  if (btype==="arsenal") GS.arsenal = Math.max(GS.arsenal, lv+1);
+  if (btype==="factory") GS.arsenal = Math.max(GS.arsenal, lv+1);
   if (btype==="research") GS.research = Math.max(GS.research, lv+1);
-  addLog("🔧 "+p.name+" "+({shipyard:"造船厂",arsenal:"兵工厂",research:"研究所",command:"指挥部"})[btype]+" 升至 L"+(lv+1));
+  addLog("🔧 "+p.name+" "+({shipyard:"造船厂",factory:"工厂",research:"研究所",command:"指挥部"})[btype]+" 升至 L"+(lv+1));
   renderAll();
 }
 
@@ -383,9 +410,14 @@ function researchDoctrine(did) {
 
 function nextTurn() {
   GS.turn++;
-  // Income
+  // Income with factory bonus
   PLANETS.forEach(function(p){
-    if (p.owner==="player") { GS.mineral += p.mineral; GS.gas += p.gas; }
+    if (p.owner==="player") {
+      var factoryLv = p.buildings.factory || 0;
+      var bonus = 1 + factoryLv * 0.1;
+      GS.mineral += Math.floor(p.mineral * bonus);
+      GS.gas += Math.floor(p.gas * bonus);
+    }
   });
   // Heal/grow: upgrade a random ship level
   if (GS.fleet.length > 0 && GS.turn % 3 === 0 && GS.research > 0) {
