@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game · 星域征服 - Litianyi</title>
+<link rel="preload" href="/assets/bg.png" as="image">
+<link rel="stylesheet" href="/style.css?v=34">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>L</text></svg>">
+<style>
+.game-glass { max-width: 1050px !important; }
+.game-wrap {
+  display: grid;
+  grid-template-columns: 200px 1fr 200px;
+  gap: 1rem;
+  min-height: 500px;
+}
+.game-panel {
+  background: rgba(8,8,10,0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+}
+.game-panel h3 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.res-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  padding: 0.25rem 0;
+  color: var(--text-secondary);
+}
+.res-val { color: var(--text-primary); font-weight: 500; }
+.res-val.e { color: #60a5fa; }
+.res-val.m { color: #f59e0b; }
+
+/* Star map */
+.star-map {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 3px;
+  aspect-ratio: 1;
+  max-height: 480px;
+}
+.star-cell {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-align: center;
+  gap: 2px;
+  min-height: 60px;
+}
+.star-cell:hover { background: rgba(255,255,255,0.08); border-color: var(--border-hover); }
+.star-cell.player { border-color: #3b82f6; background: rgba(59,130,246,0.12); }
+.star-cell.enemy { border-color: #ef4444; background: rgba(239,68,68,0.08); }
+.star-cell.selected { border-color: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.3); }
+.star-cell.reachable { border-color: rgba(245,158,11,0.5); background: rgba(245,158,11,0.06); }
+.star-cell .cell-icon { font-size: 1.2rem; }
+.star-cell .cell-name { font-size: 0.55rem; line-height: 1.1; }
+.star-cell .cell-ships { font-size: 0.55rem; color: var(--accent); }
+
+/* Ship list */
+.ship-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.ship-count { color: var(--accent); font-weight: 500; }
+
+/* Buttons */
+.game-btn {
+  display: block;
+  width: 100%;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.7rem;
+  font-family: var(--font-sans);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: 0.35rem;
+  text-align: center;
+}
+.game-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); border-color: var(--border-hover); }
+.game-btn.primary { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.game-btn.danger { color: #ef4444; border-color: rgba(239,68,68,0.3); }
+.game-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* Ship build */
+.build-options { display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.5rem; }
+.build-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: var(--text-secondary); }
+.build-cost { font-size: 0.65rem; color: var(--text-muted); }
+
+/* Action buttons */
+.action-row { display: flex; gap: 0.3rem; }
+.action-row .game-btn { flex: 1; }
+
+/* Log */
+.game-log {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  max-height: 120px;
+  overflow-y: auto;
+  line-height: 1.5;
+  margin-top: 0.5rem;
+}
+.game-log div { padding: 0.1rem 0; border-bottom: 1px solid var(--border); }
+
+@media (max-width: 800px) {
+  .game-wrap { grid-template-columns: 1fr; }
+  .star-map { max-height: 350px; }
+}
+</style>
+</head>
+<body>
+<div id="header"></div>
+<main>
+<div class="glass-panel game-glass">
+  <div class="glass-panel-header">
+    <a href="/" class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>返回首页</a>
+    <h1>星域征服</h1>
+    <p>回合制宇宙战棋 · Turn-Based Space Strategy</p>
+  </div>
+  <div class="glass-panel-body">
+    <div class="game-wrap">
+      <!-- Left panel: Resources + Build -->
+      <div>
+        <div class="game-panel" id="resPanel">
+          <h3>星域资源</h3>
+          <div class="res-row"><span>回合</span><span class="res-val" id="turnNum">1</span></div>
+          <div class="res-row"><span>⚡ 能量</span><span class="res-val e" id="resEnergy">50</span></div>
+          <div class="res-row"><span>⛏ 矿物</span><span class="res-val m" id="resMinerals">30</span></div>
+          <div class="res-row"><span>🏛 领地</span><span class="res-val" id="resTerritory">1/36</span></div>
+        </div>
+        <div class="game-panel" style="margin-top:0.75rem">
+          <h3>舰船制造</h3>
+          <div class="build-options" id="buildOptions"></div>
+        </div>
+        <div class="game-panel" style="margin-top:0.75rem">
+          <h3>舰队</h3>
+          <div id="fleetList"></div>
+        </div>
+      </div>
+
+      <!-- Center: Star Map -->
+      <div class="game-panel">
+        <div class="star-map" id="starMap"></div>
+        <div style="margin-top:0.5rem;display:flex;gap:0.4rem;flex-wrap:wrap" id="actionBar"></div>
+      </div>
+
+      <!-- Right panel: Info + Actions -->
+      <div>
+        <div class="game-panel" id="infoPanel">
+          <h3>情报</h3>
+          <div id="infoContent" style="font-size:0.72rem;color:var(--text-secondary);line-height:1.6">点击星域查看详情</div>
+        </div>
+        <div class="game-panel" style="margin-top:0.75rem">
+          <h3>操作</h3>
+          <button class="game-btn primary" onclick="nextTurn()">⏭ 结束回合</button>
+          <button class="game-btn" onclick="saveGame()">💾 保存进度</button>
+          <button class="game-btn" onclick="loadGame()">📂 读取存档</button>
+          <button class="game-btn danger" onclick="resetGame()">🔄 重新开始</button>
+          <div class="game-log" id="gameLog"><div>指挥官，基地已就绪。开始征服星域吧。</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+<div id="footer"></div>
+<script src="/script.js?v=34"></script>
+<script>
+// === GAME ENGINE ===
+var GS = {
+  turn: 1, energy: 50, minerals: 30,
+  selectedCell: null,
+  map: [], // 6x6 grid of {owner, ships:[], building:null}
+  fleet: { scout:1, frigate:0, cruiser:0, battleship:0 }, // at base
+  log: ["指挥官，基地已就绪。开始征服星域吧。"],
+  won: false
+};
+
+var SHIP_TYPES = [
+  { id:"scout", name:"侦察舰", icon:"🔍", costE:8, costM:4, atk:1, def:1, tier:1 },
+  { id:"frigate", name:"护卫舰", icon:"🛡", costE:15, costM:10, atk:3, def:3, tier:2 },
+  { id:"cruiser", name:"巡洋舰", icon:"🚀", costE:25, costM:18, atk:6, def:5, tier:3 },
+  { id:"battleship", name:"战列舰", icon:"🛸", costE:40, costM:30, atk:12, def:8, tier:4 }
+];
+
+var SECTOR_NAMES = [
+  "α-1","β-1","γ-1","δ-1","ε-1","ζ-1",
+  "α-2","β-2","γ-2","δ-2","ε-2","ζ-2",
+  "α-3","β-3","γ-3","δ-3","ε-3","ζ-3",
+  "α-4","β-4","γ-4","δ-4","ε-4","ζ-4",
+  "α-5","β-5","γ-5","δ-5","ε-5","ζ-5",
+  "α-6","β-6","γ-6","δ-6","ε-6","ζ-6"
+];
+
+function initMap() {
+  GS.map = [];
+  for (var i = 0; i < 36; i++) {
+    GS.map.push({ owner: null, ships: [], name: SECTOR_NAMES[i] });
+  }
+  // Player base at bottom-left (index 30)
+  GS.map[30].owner = "player";
+  GS.map[30].ships = [{ type:"scout", atk:1, def:1, name:"侦察舰" }];
+  // Enemy bases scattered
+  var enemyPositions = [3,8,14,21,27,33];  // Updated for 6x6
+  enemyPositions.forEach(function(p) {
+    if (p < 36) {
+      GS.map[p].owner = "enemy";
+      var r = Math.random();
+      var ship = r < 0.4 ? "scout" : r < 0.7 ? "frigate" : "cruiser";
+      var st = SHIP_TYPES.find(function(s){return s.id===ship;});
+      GS.map[p].ships = [{ type:st.id, atk:st.atk, def:st.def, name:st.name }];
+    }
+  });
+}
+
+function renderStarMap() {
+  var h = "";
+  for (var i = 0; i < 36; i++) {
+    var c = GS.map[i];
+    var cls = "star-cell";
+    if (c.owner === "player") cls += " player";
+    if (c.owner === "enemy") cls += " enemy";
+    if (GS.selectedCell === i) cls += " selected";
+    if (GS.selectedCell !== null && GS.selectedCell !== i && isReachable(GS.selectedCell, i)) cls += " reachable";
+    var icon = c.owner === "player" ? "🏛" : c.owner === "enemy" ? "💀" : "·";
+    var ships = c.ships.length > 0 ? "⚔"+c.ships.length : "";
+    h += '<div class="'+cls+'" onclick="selectCell('+i+')"><span class="cell-icon">'+icon+'</span><span class="cell-name">'+c.name+'</span><span class="cell-ships">'+ships+'</span></div>';
+  }
+  document.getElementById("starMap").innerHTML = h;
+}
+
+function isReachable(from, to) {
+  var fx = from % 6, fy = Math.floor(from / 6);
+  var tx = to % 6, ty = Math.floor(to / 6);
+  return Math.abs(fx - tx) <= 1 && Math.abs(fy - ty) <= 1 && !(fx === tx && fy === ty);
+}
+
+function selectCell(i) {
+  if (GS.selectedCell === i) { GS.selectedCell = null; renderAll(); return; }
+  GS.selectedCell = i;
+  renderAll();
+}
+
+function renderAll() {
+  renderStarMap();
+  renderResources();
+  renderFleet();
+  renderBuildOptions();
+  renderActionBar();
+  renderInfo();
+  renderLog();
+}
+
+function renderResources() {
+  document.getElementById("turnNum").textContent = GS.turn;
+  document.getElementById("resEnergy").textContent = GS.energy;
+  document.getElementById("resMinerals").textContent = GS.minerals;
+  var terr = GS.map.filter(function(c){return c.owner==="player";}).length;
+  document.getElementById("resTerritory").textContent = terr + "/36";
+}
+
+function renderFleet() {
+  var h = "";
+  SHIP_TYPES.forEach(function(s) {
+    var count = GS.fleet[s.id] || 0;
+    if (count > 0) h += '<div class="ship-row"><span>'+s.icon+' '+s.name+'</span><span class="ship-count">'+count+'</span></div>';
+  });
+  if (!h) h = '<div style="font-size:0.7rem;color:var(--text-muted)">暂无舰船</div>';
+  document.getElementById("fleetList").innerHTML = h;
+}
+
+function renderBuildOptions() {
+  var h = "";
+  SHIP_TYPES.forEach(function(s, idx) {
+    h += '<button class="game-btn build-row" onclick="buildShip(\''+s.id+'\')" '+(GS.energy>=s.costE&&GS.minerals>=s.costM?'':'disabled')+'>';
+    h += '<span>'+s.icon+' '+s.name+' (T'+s.tier+')</span>';
+    h += '<span class="build-cost">⚡'+s.costE+' ⛏'+s.costM+'</span>';
+    h += '</button>';
+  });
+  document.getElementById("buildOptions").innerHTML = h;
+}
+
+function buildShip(typeId) {
+  var s = SHIP_TYPES.find(function(x){return x.id===typeId;});
+  if (!s || GS.energy < s.costE || GS.minerals < s.costM) return;
+  GS.energy -= s.costE;
+  GS.minerals -= s.costM;
+  GS.fleet[typeId] = (GS.fleet[typeId] || 0) + 1;
+  addLog("制造了 1 艘 "+s.name+" (-⚡"+s.costE+" -⛏"+s.costM+")");
+  renderAll();
+}
+
+function renderActionBar() {
+  var h = "";
+  if (GS.selectedCell !== null) {
+    var c = GS.map[GS.selectedCell];
+    var isAdj = GS.selectedCell === 30 || GS.map[30].owner === "player" && isReachable(30, GS.selectedCell);
+    // Check if any player territory is adjacent
+    var adjToPlayer = false;
+    for (var i = 0; i < 36; i++) {
+      if (GS.map[i].owner === "player" && isReachable(i, GS.selectedCell)) { adjToPlayer = true; break; }
+    }
+    if (c.owner === "enemy" && adjToPlayer) {
+      h += '<button class="game-btn primary" onclick="attackCell('+GS.selectedCell+')">⚔ 攻击</button>';
+    }
+    if (c.owner === null && adjToPlayer) {
+      h += '<button class="game-btn" onclick="deployTo('+GS.selectedCell+')">🚀 部署舰队</button>';
+    }
+    if (c.owner === "player" && GS.selectedCell !== 30) {
+      h += '<button class="game-btn" onclick="recallFleet('+GS.selectedCell+')">↩ 召回舰队</button>';
+    }
+  }
+  document.getElementById("actionBar").innerHTML = h;
+}
+
+function deployTo(cellIdx) {
+  var totalShips = 0;
+  SHIP_TYPES.forEach(function(s){ totalShips += GS.fleet[s.id] || 0; });
+  if (totalShips === 0) { addLog("没有可部署的舰队！"); return; }
+  // Deploy one of each type if available
+  var deployed = [];
+  SHIP_TYPES.forEach(function(s) {
+    if (GS.fleet[s.id] > 0) {
+      GS.fleet[s.id]--;
+      GS.map[cellIdx].ships.push({ type:s.id, atk:s.atk, def:s.def, name:s.name });
+      deployed.push(s.name);
+    }
+  });
+  GS.map[cellIdx].owner = "player";
+  addLog("向 "+GS.map[cellIdx].name+" 部署了 "+deployed.join("、"));
+  GS.selectedCell = null;
+  renderAll();
+}
+
+function attackCell(cellIdx) {
+  var enemyCell = GS.map[cellIdx];
+  // Gather attacking fleet from adjacent player territories
+  var atkFleet = [];
+  for (var i = 0; i < 36; i++) {
+    if (GS.map[i].owner === "player" && isReachable(i, cellIdx)) {
+      atkFleet = atkFleet.concat(GS.map[i].ships);
+    }
+  }
+  if (atkFleet.length === 0) { addLog("没有可出击的舰队！"); return; }
+
+  var totalAtk = 0, totalDef = 0;
+  atkFleet.forEach(function(s){ totalAtk += s.atk; totalDef += s.def; });
+  var enemyAtk = 0, enemyDef = 0;
+  enemyCell.ships.forEach(function(s){ enemyAtk += s.atk; enemyDef += s.def; });
+
+  // Battle resolution
+  var playerPower = totalAtk * 1.5 + totalDef;
+  var enemyPower = enemyAtk + enemyDef * 1.5;
+
+  if (playerPower >= enemyPower) {
+    // Victory
+    enemyCell.owner = "player";
+    enemyCell.ships = [];
+    // Move one surviving ship to conquered territory
+    if (atkFleet.length > 0) {
+      var survivor = atkFleet[Math.floor(Math.random() * atkFleet.length)];
+      enemyCell.ships.push(survivor);
+    }
+    GS.energy += 10;
+    GS.minerals += 5;
+    addLog("⚔ 攻占 "+enemyCell.name+"！我方战力 "+Math.floor(playerPower)+" vs 敌方 "+Math.floor(enemyPower));
+    checkWin();
+  } else {
+    // Defeat
+    addLog("❌ 攻击 "+enemyCell.name+" 失败。我方 "+Math.floor(playerPower)+" vs 敌方 "+Math.floor(enemyPower)+"。重整旗鼓吧。");
+  }
+  GS.selectedCell = null;
+  renderAll();
+}
+
+function recallFleet(cellIdx) {
+  var c = GS.map[cellIdx];
+  c.ships.forEach(function(s) {
+    var st = SHIP_TYPES.find(function(x){return x.id===s.type;});
+    if (st) GS.fleet[st.id] = (GS.fleet[st.id]||0)+1;
+  });
+  addLog("从 "+c.name+" 召回了 "+c.ships.length+" 艘舰船");
+  c.ships = [];
+  renderAll();
+}
+
+function nextTurn() {
+  GS.turn++;
+  GS.energy += 15 + GS.map.filter(function(c){return c.owner==="player";}).length * 3;
+  GS.minerals += 8 + GS.map.filter(function(c){return c.owner==="player";}).length * 2;
+  addLog("--- 第 "+GS.turn+" 回合 --- 资源已更新");
+  renderAll();
+}
+
+function checkWin() {
+  var enemies = GS.map.filter(function(c){return c.owner==="enemy";}).length;
+  if (enemies === 0) {
+    GS.won = true;
+    addLog("🎉 恭喜！星域已完全征服！你是宇宙的统治者！");
+  }
+}
+
+function addLog(msg) {
+  GS.log.unshift(msg);
+  if (GS.log.length > 50) GS.log.pop();
+  renderLog();
+}
+
+function renderLog() {
+  document.getElementById("gameLog").innerHTML = GS.log.slice(0,15).map(function(m){return '<div>'+m+'</div>';}).join("");
+}
+
+function renderInfo() {
+  if (GS.selectedCell === null) {
+    document.getElementById("infoContent").innerHTML = "点击星域查看详情";
+    return;
+  }
+  var c = GS.map[GS.selectedCell];
+  var ownerText = c.owner === "player" ? "我方领地" : c.owner === "enemy" ? "敌方据点" : "无主星域";
+  var shipList = c.ships.map(function(s){return s.name;}).join("、") || "无";
+  document.getElementById("infoContent").innerHTML =
+    "<strong>"+c.name+"</strong><br>"+
+    "状态："+ownerText+"<br>"+
+    "驻军："+shipList+"<br>"+
+    "坐标："+(GS.selectedCell%6+1)+","+(Math.floor(GS.selectedCell/6)+1);
+}
+
+function saveGame() {
+  var data = {
+    turn: GS.turn, energy: GS.energy, minerals: GS.minerals,
+    fleet: GS.fleet, map: GS.map.map(function(c){ return {owner:c.owner, ships:c.ships}; }),
+    won: GS.won
+  };
+  try { localStorage.setItem("stargame_save", JSON.stringify(data)); addLog("💾 进度已保存"); } catch(e) { addLog("保存失败"); }
+}
+
+function loadGame() {
+  try {
+    var raw = localStorage.getItem("stargame_save");
+    if (!raw) { addLog("没有找到存档"); return; }
+    var data = JSON.parse(raw);
+    GS.turn = data.turn; GS.energy = data.energy; GS.minerals = data.minerals;
+    GS.fleet = data.fleet; GS.won = data.won; GS.selectedCell = null;
+    for (var i = 0; i < 36; i++) {
+      GS.map[i].owner = data.map[i].owner;
+      GS.map[i].ships = data.map[i].ships;
+    }
+    addLog("📂 存档已读取 · 第 "+GS.turn+" 回合");
+    renderAll();
+  } catch(e) { addLog("读取存档失败"); }
+}
+
+function resetGame() {
+  if (!confirm("确定要重新开始吗？当前进度将丢失。")) return;
+  GS.turn = 1; GS.energy = 50; GS.minerals = 30; GS.fleet = { scout:1 }; GS.selectedCell = null; GS.won = false; GS.log = ["指挥官，基地已就绪。"];
+  initMap();
+  renderAll();
+}
+
+// Init
+initMap();
+renderAll();
+</script>
+</body>
+</html>
