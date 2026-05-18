@@ -181,13 +181,16 @@
   ];
 
   var routes = [
-    // === 真实数据 (来自机票-1.json) ===
-    { from:"guangzhou",to:"seoul",  type:"flight", dist:"—", price:"¥1346", flight:"CX983", airline:"国泰航空", depAirport:"广州白云T3", arrAirport:"香港国际T1", plane:"A330-300", size:"大", time:"10:10-11:45",
+    // === 真实数据 (来自价格.json) ===
+    { from:"guangzhou",to:"seoul",  type:"flight", dist:"—", price:"¥1346", flight:"CX983", airline:"国泰航空", depAirport:"广州白云T3", arrAirport:"香港国际T1", plane:"A330-300", size:"大", time:"10:10-11:45", luggage:"托运1x23kg+手提1件",
       transfer:true, transferCity:"香港", flight2:"CX434", airline2:"国泰航空", depAirport2:"香港国际T1", arrAirport2:"首尔仁川T1", plane2:"A321", size2:"中", time2:"07:55-12:40", note:"全程仅部分税费可退，改期费800元起" },
-    { from:"seoul",    to:"jeju",    type:"flight", dist:"—", price:"¥235",  flight:"ZE231", airline:"易斯达航空", depAirport:"首尔金浦", arrAirport:"济州岛国际", plane:"B737-800", size:"中", time:"19:20-20:35", note:"不得退改" },
-    { from:"busan",    to:"jeju",    type:"flight", dist:"—", price:"¥311",  flight:"LJ569", airline:"真航空", depAirport:"釜山金海D", arrAirport:"济州岛国际", plane:"B737-800", size:"中", time:"19:00-20:00", note:"不得退票，改期费150元起" },
-    { from:"seoul",    to:"tokyo",   type:"flight", dist:"—", price:"¥839",  flight:"7C1107",airline:"济州航空", depAirport:"首尔仁川T1", arrAirport:"东京成田T3", plane:"B737MAX8", size:"中", time:"15:00-17:30", note:"退票费100元起，改期费190元起" },
-    { from:"seoul",    to:"osaka",   type:"flight", dist:"—", price:"¥620",  flight:"BX176", airline:"釜山航空", depAirport:"首尔仁川T2", arrAirport:"大阪关西T1", plane:"A321", size:"中", time:"14:50-17:10", note:"退票费480元起，改期费320元起" },
+    { from:"seoul",    to:"jeju",    type:"flight", dist:"—", price:"¥235",  flight:"ZE231", airline:"易斯达航空", depAirport:"首尔金浦", arrAirport:"济州岛国际", plane:"B737-800", size:"中", time:"19:20-20:35", luggage:"托运15kg+手提1件", note:"不得退改" },
+    { from:"busan",    to:"jeju",    type:"flight", dist:"—", price:"¥311",  flight:"LJ569", airline:"真航空", depAirport:"釜山金海D", arrAirport:"济州岛国际", plane:"B737-800", size:"中", time:"19:00-20:00", luggage:"托运15kg+手提1x12kg", note:"不得退票，改期费150元起" },
+    { from:"seoul",    to:"tokyo",   type:"flight", dist:"—", price:"¥839",  flight:"7C1107",airline:"济州航空", depAirport:"首尔仁川T1", arrAirport:"东京成田T3", plane:"B737MAX8", size:"中", time:"15:00-17:30", luggage:"托运15kg+手提1件", note:"退票费100元起，改期费190元起" },
+    { from:"seoul",    to:"osaka",   type:"flight", dist:"—", price:"¥620",  flight:"BX176", airline:"釜山航空", depAirport:"首尔仁川T2", arrAirport:"大阪关西T1", plane:"A321", size:"中", time:"14:50-17:10", luggage:"托运15kg+手提1件", note:"退票费480元起，改期费320元起" },
+    { from:"busan",    to:"osaka",   type:"flight", dist:"—", price:"¥590",  flight:"LJ255", airline:"真航空", depAirport:"釜山金海", arrAirport:"大阪关西T1", plane:"B737-800", size:"中", time:"08:25-09:55", luggage:"托运15kg+手提1x10kg", note:"不得退改" },
+    { from:"busan",    to:"tokyo",   type:"flight", dist:"—", price:"¥818",  flight:"7C1151",airline:"济州航空", depAirport:"釜山金海", arrAirport:"东京成田T3", plane:"B737-800", size:"中", time:"07:30-09:30", luggage:"托运15kg+手提1件", note:"不得退改" },
+    { from:"chengdu",  to:"guangzhou",type:"rail",  dist:"—", price:"¥466",  train:"G3707", info:"成都东→广州南", depAirport:"成都东", arrAirport:"广州南", time:"07:00-15:33", duration:"8h33min", note:"二等座" },
     // === 存疑路线 (示意数据，待确认) ===
     { from:"guangzhou",to:"hongkong",type:"rail",   dist:"140km", price:"¥80",   train:"G6581", info:"广深港高铁", dubious:true },
     { from:"seoul",  to:"busan",    type:"rail",   dist:"330km", price:"¥300",  train:"KTX101",info:"京釜高铁", dubious:true },
@@ -198,8 +201,8 @@
     { from:"guangzhou",to:"tokyo",  type:"flight", dist:"2800km",price:"¥2300", flight:"CZ385", airline:"中国南方航空", depAirport:"广州白云", arrAirport:"东京成田", plane:"B787", size:"大", transfer:true, transferCity:"上海浦东", airline2:"中国东方航空", flight2:"MU523", dubious:true }
   ];
 
-  // Default visible: only real routes (indices 0-4)
-  var defaultVisible = [0,1,2,3,4];
+  // Default visible: all real routes (indices 0-7)
+  var defaultVisible = [0,1,2,3,4,5,6,7];
   var hiddenRoutes = {};
   routes.forEach(function(r, i) {
     if (defaultVisible.indexOf(i) === -1) hiddenRoutes[i] = true;
@@ -279,19 +282,23 @@
         var body;
         if (isFlight) {
           if (r.transfer) {
-            body = '第一程：'+r.airline+' '+r.flight+'<br>'+
-              r.depAirport+' → '+r.arrAirport+'<br>'+
+            body = '<span style="color:#f59e0b">⚠ 转机：'+r.transferCity+'</span><br>'+
+              '第一程：'+r.airline+' '+r.flight+'<br>'+
+              '✈ '+r.depAirport+' → '+r.arrAirport+'<br>'+
               r.plane+'（'+r.size+'） '+r.time+'<br>'+
               '第二程：'+r.airline2+' '+r.flight2+'<br>'+
-              r.depAirport2+' → '+r.arrAirport2+'<br>'+
+              '✈ '+r.depAirport2+' → '+r.arrAirport2+'<br>'+
               r.plane2+'（'+r.size2+'） '+r.time2;
           } else {
-            body = (r.flight||'')+'　'+r.airline+'<br>'+
-              r.depAirport+' → '+r.arrAirport+'<br>'+
+            body = r.airline+' '+r.flight+'<br>'+
+              '✈ '+r.depAirport+' → '+r.arrAirport+'<br>'+
               r.plane+'（'+r.size+'） '+ (r.time||'');
           }
+          if (r.luggage) body += '<br>🧳 '+r.luggage;
         } else {
-          body = '车次：'+r.train+'<br>线路：'+r.info+'　席别：二等座';
+          body = '车次：'+r.train+'<br>'+
+            '🚄 '+r.depAirport+' → '+r.arrAirport+'<br>'+
+            r.duration+'　'+r.note;
         }
         var footer = '';
         if (r.note) footer = '<br><span style="color:var(--text-muted);font-size:0.7rem">'+r.note+'</span>';
