@@ -181,35 +181,25 @@
   ];
 
   var routes = [
-    { from:"beijing",to:"xian",     type:"rail",   dist:"910km", price:"¥515",  train:"G655",  info:"京广高铁" },
-    { from:"beijing",to:"shanghai", type:"rail",   dist:"1210km",price:"¥553",  train:"G1",    info:"京沪高铁" },
-    { from:"xian",   to:"chengdu",  type:"rail",   dist:"660km", price:"¥263",  train:"D1917", info:"西成高铁" },
-    { from:"shanghai",to:"guangzhou",type:"rail",  dist:"1400km",price:"¥730",  train:"G85",   info:"沪广高铁" },
-    { from:"guangzhou",to:"hongkong",type:"rail",  dist:"140km", price:"¥80",   train:"G6581", info:"广深港高铁" },
-    { from:"seoul",  to:"busan",    type:"rail",   dist:"330km", price:"¥300",  train:"KTX101",info:"京釜高铁" },
-    { from:"tokyo",  to:"osaka",    type:"rail",   dist:"500km", price:"¥800",  train:"Nozomi1",info:"东海道新干线" },
-    { from:"beijing",to:"seoul",    type:"flight", dist:"950km", price:"¥1200", flight:"CA123", airline:"中国国际航空", plane:"A330", size:"大", transfer:true, transferCity:"大连", airline2:"中国南方航空", flight2:"CZ685", size2:"中" },
-    { from:"beijing",to:"tokyo",    type:"flight", dist:"2100km",price:"¥2500", flight:"CA925", airline:"中国国际航空", plane:"B787", size:"大" },
-    { from:"shanghai",to:"tokyo",   type:"flight", dist:"1750km",price:"¥2100", flight:"MU523", airline:"中国东方航空", plane:"B777", size:"大" },
-    { from:"shanghai",to:"osaka",   type:"flight", dist:"1400km",price:"¥1800", flight:"CA857", airline:"中国国际航空", plane:"A321", size:"中" },
-    { from:"busan",  to:"osaka",    type:"flight", dist:"550km", price:"¥900",  flight:"KE731", airline:"大韩航空", plane:"A320", size:"中" },
-    { from:"hongkong",to:"seoul",   type:"flight", dist:"2050km",price:"¥2200", flight:"CX416", airline:"国泰航空", plane:"A350", size:"大" },
-    { from:"hongkong",to:"tokyo",   type:"flight", dist:"2800km",price:"¥2800", flight:"CX500", airline:"国泰航空", plane:"B777", size:"大" },
-    { from:"chengdu",to:"guangzhou",type:"rail",   dist:"1350km",price:"¥540",  train:"D1801", info:"成贵广高铁" },
-    { from:"chengdu",to:"guangzhou",type:"flight", dist:"1200km",price:"¥900",  flight:"CA431", airline:"中国国际航空", plane:"A320", size:"中" },
-    { from:"xian",   to:"shanghai", type:"rail",   dist:"1200km",price:"¥520",  train:"G1918", info:"徐兰高铁" },
-    { from:"xian",   to:"guangzhou",type:"flight", dist:"1300km",price:"¥950",  flight:"CZ322", airline:"中国南方航空", plane:"B738", size:"中" },
-    { from:"beijing",to:"chengdu",  type:"flight", dist:"1500km",price:"¥1100", flight:"CA411", airline:"中国国际航空", plane:"A330", size:"大" },
-    { from:"beijing",to:"guangzhou",type:"flight", dist:"1900km",price:"¥1400", flight:"CZ312", airline:"中国南方航空", plane:"B787", size:"大" },
-    { from:"shanghai",to:"xian",    type:"flight", dist:"1100km",price:"¥850",  flight:"MU215", airline:"中国东方航空", plane:"A320", size:"中" },
-    { from:"guangzhou",to:"seoul",  type:"flight", dist:"2100km",price:"¥1900", flight:"CZ337", airline:"中国南方航空", plane:"A330", size:"大" },
-    { from:"guangzhou",to:"tokyo",   type:"flight", dist:"2800km",price:"¥2300", flight:"CZ385", airline:"中国南方航空", plane:"B787", size:"大", transfer:true, transferCity:"上海浦东", airline2:"中国东方航空", flight2:"MU523", size2:"大" },
-    { from:"seoul",    to:"tokyo",   type:"flight", dist:"1150km",price:"¥1500", flight:"KE701", airline:"大韩航空", plane:"B777", size:"大" },
-    { from:"busan",    to:"jeju",    type:"flight", dist:"290km", price:"¥400",  flight:"KE1005",airline:"大韩航空", plane:"A320", size:"中" }
+    // === 真实数据 (来自机票-1.json) ===
+    { from:"guangzhou",to:"seoul",  type:"flight", dist:"—", price:"¥1346", flight:"CX983", airline:"国泰航空", depAirport:"广州白云T3", arrAirport:"香港国际T1", plane:"A330-300", size:"大", time:"10:10-11:45",
+      transfer:true, transferCity:"香港", flight2:"CX434", airline2:"国泰航空", depAirport2:"香港国际T1", arrAirport2:"首尔仁川T1", plane2:"A321", size2:"中", time2:"07:55-12:40", note:"全程仅部分税费可退，改期费800元起" },
+    { from:"seoul",    to:"jeju",    type:"flight", dist:"—", price:"¥235",  flight:"ZE231", airline:"易斯达航空", depAirport:"首尔金浦", arrAirport:"济州岛国际", plane:"B737-800", size:"中", time:"19:20-20:35", note:"不得退改" },
+    { from:"busan",    to:"jeju",    type:"flight", dist:"—", price:"¥311",  flight:"LJ569", airline:"真航空", depAirport:"釜山金海D", arrAirport:"济州岛国际", plane:"B737-800", size:"中", time:"19:00-20:00", note:"不得退票，改期费150元起" },
+    { from:"seoul",    to:"tokyo",   type:"flight", dist:"—", price:"¥839",  flight:"7C1107",airline:"济州航空", depAirport:"首尔仁川T1", arrAirport:"东京成田T3", plane:"B737MAX8", size:"中", time:"15:00-17:30", note:"退票费100元起，改期费190元起" },
+    { from:"seoul",    to:"osaka",   type:"flight", dist:"—", price:"¥620",  flight:"BX176", airline:"釜山航空", depAirport:"首尔仁川T2", arrAirport:"大阪关西T1", plane:"A321", size:"中", time:"14:50-17:10", note:"退票费480元起，改期费320元起" },
+    // === 存疑路线 (示意数据，待确认) ===
+    { from:"guangzhou",to:"hongkong",type:"rail",   dist:"140km", price:"¥80",   train:"G6581", info:"广深港高铁", dubious:true },
+    { from:"seoul",  to:"busan",    type:"rail",   dist:"330km", price:"¥300",  train:"KTX101",info:"京釜高铁", dubious:true },
+    { from:"tokyo",  to:"osaka",    type:"rail",   dist:"500km", price:"¥800",  train:"Nozomi1",info:"东海道新干线", dubious:true },
+    { from:"chengdu",to:"guangzhou",type:"flight", dist:"1200km",price:"¥900",  flight:"CA431", airline:"中国国际航空", depAirport:"成都天府", arrAirport:"广州白云", plane:"A320", size:"中", dubious:true },
+    { from:"hongkong",to:"seoul",   type:"flight", dist:"2050km",price:"¥2200", flight:"CX416", airline:"国泰航空", depAirport:"香港国际", arrAirport:"首尔仁川", plane:"A350", size:"大", dubious:true },
+    { from:"hongkong",to:"tokyo",   type:"flight", dist:"2800km",price:"¥2800", flight:"CX500", airline:"国泰航空", depAirport:"香港国际", arrAirport:"东京成田", plane:"B777", size:"大", dubious:true },
+    { from:"guangzhou",to:"tokyo",  type:"flight", dist:"2800km",price:"¥2300", flight:"CZ385", airline:"中国南方航空", depAirport:"广州白云", arrAirport:"东京成田", plane:"B787", size:"大", transfer:true, transferCity:"上海浦东", airline2:"中国东方航空", flight2:"MU523", dubious:true }
   ];
 
-  // Default visible route indices (成广/广港/广首尔/广东京/首尔东京/釜山济州)
-  var defaultVisible = [15,4,21,22,23,24,5,6];
+  // Default visible: only real routes (indices 0-4)
+  var defaultVisible = [0,1,2,3,4];
   var hiddenRoutes = {};
   routes.forEach(function(r, i) {
     if (defaultVisible.indexOf(i) === -1) hiddenRoutes[i] = true;
@@ -284,20 +274,32 @@
         if (y < 0) y = 10;
         var isFlight = r.type === "flight";
         var cls = isFlight ? "tt-flight" : "tt-rail";
-        var transferHtml = '';
-        if (r.transfer) {
-          transferHtml = '<br><span style="color:#f59e0b">⚠ 转机：'+r.transferCity+'</span>'+
-            '<br>第一程：'+r.airline+' '+r.flight+'　'+r.plane+'（'+r.size+'）'+
-            '<br>第二程：'+r.airline2+' '+r.flight2+'　'+r.size2+'（'+r.size2+'）';
+        var titleTag = isFlight?'✈ 航班':'🚄 列车';
+        if (r.dubious) titleTag += ' ❓存疑';
+        var body;
+        if (isFlight) {
+          if (r.transfer) {
+            body = '第一程：'+r.airline+' '+r.flight+'<br>'+
+              r.depAirport+' → '+r.arrAirport+'<br>'+
+              r.plane+'（'+r.size+'） '+r.time+'<br>'+
+              '第二程：'+r.airline2+' '+r.flight2+'<br>'+
+              r.depAirport2+' → '+r.arrAirport2+'<br>'+
+              r.plane2+'（'+r.size2+'） '+r.time2;
+          } else {
+            body = (r.flight||'')+'　'+r.airline+'<br>'+
+              r.depAirport+' → '+r.arrAirport+'<br>'+
+              r.plane+'（'+r.size+'） '+ (r.time||'');
+          }
+        } else {
+          body = '车次：'+r.train+'<br>线路：'+r.info+'　席别：二等座';
         }
+        var footer = '';
+        if (r.note) footer = '<br><span style="color:var(--text-muted);font-size:0.7rem">'+r.note+'</span>';
         tooltip.innerHTML =
-          '<span class="'+cls+'">'+(isFlight?'✈ 航班':'🚄 列车')+'</span><br>'+
+          '<span class="'+cls+'">'+titleTag+'</span><br>'+
           '<strong>'+cmap[r.from].name+' → '+cmap[r.to].name+'</strong><br>'+
-          '距离：'+r.dist+'　票价：'+r.price+'<br>'+
-          (isFlight
-            ? (r.transfer ? '' : '航班号：'+r.flight+'　航司：'+r.airline+'<br>机型：'+r.plane+'（'+r.size+'）')
-            : '车次：'+r.train+'<br>线路：'+r.info+'　席别：二等座')+
-          transferHtml;
+          '票价：'+r.price+ (r.dist!=='—'?'　距离：'+r.dist:'') +'<br>'+
+          body + footer;
         tooltip.style.display = "block";
         tooltip.style.left = x + "px";
         tooltip.style.top = y + "px";
@@ -332,10 +334,16 @@
     h += '<label style="margin-bottom:0.3rem"><input type="checkbox" checked onchange="togglePrice()"> 显示价格</label>';
     h += '<button id="routeEditBtn" style="width:100%;padding:0.25rem 0;font-size:0.68rem;font-family:var(--font-sans);background:var(--bg-card);border:1px solid var(--border);border-radius:4px;color:var(--text-secondary);cursor:pointer;">详细设置 ▼</button>';
     h += '<div id="routeEditPanel" style="display:none;max-height:250px;overflow-y:auto;margin-top:0.3rem;">';
+    h += '<span class="region-title">真实数据</span>';
     routes.forEach(function(r, i) {
+      if (r.dubious && i === routes.findIndex(function(x){return x.dubious;})) {
+        h += '<span class="region-title" style="margin-top:0.8rem">存疑路线</span>';
+      }
       var isFlight = r.type === "flight";
       var icon = isFlight ? "✈" : "🚄";
-      h += '<label style="font-size:0.65rem;padding:0.15rem 0.3rem;"><input type="checkbox" checked onchange="toggleRoute('+i+')">'+icon+' '+cmap[r.from].name+'→'+cmap[r.to].name+'</label>';
+      var dub = r.dubious ? " ❓" : "";
+      var chk = hiddenRoutes[i] ? '' : ' checked';
+      h += '<label style="font-size:0.65rem;padding:0.15rem 0.3rem;"><input type="checkbox"'+chk+' onchange="toggleRoute('+i+')">'+icon+' '+cmap[r.from].name+'→'+cmap[r.to].name+dub+'</label>';
     });
     h += '</div>';
     var lastRegion = "";
