@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Litianyi's travel plan - abstract route map.">
+  <title>Plan - Litianyi</title>
+  <link rel="preload" href="/assets/bg.png" as="image">
+  <link rel="stylesheet" href="/style.css?v=19">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>L</text></svg>">
+  <style>
+    .plan-map-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    .plan-map-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .plan-map-wrap .city-dot { fill: var(--accent); }
+    .plan-map-wrap .city-label { fill: var(--text-secondary); font-family: var(--font-sans); font-size: 13px; }
+    .plan-map-wrap .city-label-ja { fill: var(--text-muted); font-family: var(--font-sans); font-size: 10px; }
+    .plan-map-wrap .route-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 6 4; fill: none; }
+    .plan-map-wrap .route-line-solid { stroke: var(--border); stroke-width: 1; fill: none; }
+    .plan-map-wrap .sea-label { fill: var(--text-muted); font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.2em; }
+    .plan-map-wrap .region-tag { fill: var(--accent); font-family: var(--font-sans); font-size: 11px; font-weight: 600; }
+    @media (max-width: 600px) {
+      .plan-map-wrap .city-label { font-size: 10px; }
+      .plan-map-wrap .city-label-ja { font-size: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="header"></div>
+
+  <main>
+    <div class="glass-panel">
+      <div class="glass-panel-header">
+        <a href="/" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          返回首页
+        </a>
+        <h1>Plan</h1>
+        <p>旅行规划 · 路线地图</p>
+      </div>
+      <div class="glass-panel-body">
+        <div class="plan-map-wrap">
+
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Background coastline hint -->
+  <path d="M180,80 Q250,50 350,60 Q480,30 580,50 Q650,60 700,90" class="route-line-solid" opacity="0.3"/>
+  <path d="M160,120 Q200,100 260,110 Q340,90 420,100 Q500,80 560,100 Q620,110 680,130" class="route-line-solid" opacity="0.15"/>
+
+  <!-- Region labels -->
+  <text x="310" y="40" class="region-tag">CHINA</text>
+  <text x="610" y="65" class="region-tag">KOREA</text>
+  <text x="710" y="140" class="region-tag">JAPAN</text>
+
+  <!-- Sea labels -->
+  <text x="560" y="155" class="sea-label">黄 海</text>
+  <text x="630" y="230" class="sea-label">东 海</text>
+
+  <!-- Routes between cities -->
+  <!-- Beijing - Xi'an -->
+  <line x1="505" y1="108" x2="390" y2="205" class="route-line"/>
+  <!-- Beijing - Shanghai -->
+  <line x1="505" y1="108" x2="590" y2="260" class="route-line"/>
+  <!-- Xi'an - Chengdu -->
+  <line x1="390" y1="205" x2="290" y2="285" class="route-line"/>
+  <!-- Chengdu - Guangzhou -->
+  <line x1="290" y1="285" x2="425" y2="380" class="route-line"/>
+  <!-- Guangzhou - Hong Kong -->
+  <line x1="425" y1="380" x2="460" y2="410" class="route-line" stroke-dasharray="3 3"/>
+  <!-- Shanghai - Guangzhou -->
+  <line x1="590" y1="260" x2="425" y2="380" class="route-line"/>
+  <!-- Xi'an - Shanghai -->
+  <line x1="390" y1="205" x2="590" y2="260" class="route-line"/>
+
+  <!-- Korea routes -->
+  <!-- Seoul - Busan -->
+  <line x1="605" y1="90" x2="635" y2="170" class="route-line"/>
+  <!-- Busan - Jeju -->
+  <line x1="635" y1="170" x2="575" y2="225" class="route-line" stroke-dasharray="3 5"/>
+
+  <!-- Japan routes -->
+  <!-- Tokyo - Osaka -->
+  <line x1="708" y1="150" x2="690" y2="205" class="route-line"/>
+
+  <!-- Cross-sea routes -->
+  <!-- Beijing - Seoul -->
+  <line x1="505" y1="108" x2="605" y2="90" class="route-line" stroke-dasharray="4 6"/>
+  <!-- Shanghai - Osaka -->
+  <line x1="590" y1="260" x2="690" y2="205" class="route-line" stroke-dasharray="4 8"/>
+  <!-- Shanghai - Tokyo -->
+  <line x1="590" y1="260" x2="708" y2="150" class="route-line" stroke-dasharray="4 8"/>
+  <!-- Busan - Osaka -->
+  <line x1="635" y1="170" x2="690" y2="205" class="route-line" stroke-dasharray="4 6"/>
+
+  <!-- City dots and labels -->
+
+  <!-- 北京 -->
+  <circle cx="505" cy="108" r="5" class="city-dot"/>
+  <text x="478" y="98" class="city-label" text-anchor="end">北京</text>
+
+  <!-- 西安 -->
+  <circle cx="390" cy="205" r="4" class="city-dot"/>
+  <text x="368" y="200" class="city-label" text-anchor="end">西安</text>
+
+  <!-- 成都 -->
+  <circle cx="290" cy="285" r="4" class="city-dot"/>
+  <text x="262" y="295" class="city-label" text-anchor="end">成都</text>
+
+  <!-- 上海 -->
+  <circle cx="590" cy="260" r="5" class="city-dot"/>
+  <text x="606" y="258" class="city-label">上海</text>
+
+  <!-- 广州 -->
+  <circle cx="425" cy="380" r="4" class="city-dot"/>
+  <text x="442" y="385" class="city-label">广州</text>
+
+  <!-- 香港 -->
+  <circle cx="460" cy="410" r="3.5" class="city-dot"/>
+  <text x="473" y="415" class="city-label">香港</text>
+
+  <!-- 首尔 -->
+  <circle cx="605" cy="90" r="4.5" class="city-dot"/>
+  <text x="620" y="88" class="city-label">首尔</text>
+
+  <!-- 釜山 -->
+  <circle cx="635" cy="170" r="3.5" class="city-dot"/>
+  <text x="648" y="175" class="city-label">釜山</text>
+
+  <!-- 济州岛 -->
+  <circle cx="575" cy="225" r="3" class="city-dot"/>
+  <text x="555" y="222" class="city-label">济州</text>
+
+  <!-- 东京 -->
+  <circle cx="708" cy="150" r="4.5" class="city-dot"/>
+  <text x="718" y="148" class="city-label">东京</text>
+  <text x="718" y="162" class="city-label-ja">Tokyo</text>
+
+  <!-- 大阪 -->
+  <circle cx="690" cy="205" r="4" class="city-dot"/>
+  <text x="702" y="210" class="city-label">大阪</text>
+  <text x="702" y="224" class="city-label-ja">Osaka</text>
+
+  <!-- Legend -->
+  <line x1="30" y1="480" x2="80" y2="480" class="route-line"/>
+  <text x="90" y="484" class="sea-label">陆路 / 铁路</text>
+
+  <line x1="30" y1="505" x2="80" y2="505" class="route-line" stroke-dasharray="4 6"/>
+  <text x="90" y="509" class="sea-label">航空 / 海路</text>
+
+  <circle cx="37" cy="528" r="3.5" class="city-dot"/>
+  <text x="90" y="532" class="sea-label">城市</text>
+
+</svg>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="/script.js?v=19"></script>
+</body>
+</html>
