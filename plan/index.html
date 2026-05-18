@@ -277,6 +277,11 @@
         var rect = mapWrap.getBoundingClientRect();
         var x = e.clientX - rect.left + 14;
         var y = e.clientY - rect.top - 10;
+        // Keep tooltip inside map bounds
+        if (x + 260 > rect.width) x = e.clientX - rect.left - 270;
+        if (y + 120 > rect.height) y = e.clientY - rect.top - 130;
+        if (x < 0) x = 10;
+        if (y < 0) y = 10;
         var isFlight = r.type === "flight";
         var cls = isFlight ? "tt-flight" : "tt-rail";
         var transferHtml = '';
@@ -300,8 +305,14 @@
       });
       line.addEventListener("mousemove", function(e) {
         var rect = mapWrap.getBoundingClientRect();
-        tooltip.style.left = (e.clientX - rect.left + 14) + "px";
-        tooltip.style.top = (e.clientY - rect.top - 10) + "px";
+        var tx = e.clientX - rect.left + 14;
+        var ty = e.clientY - rect.top - 10;
+        if (tx + 260 > rect.width) tx = e.clientX - rect.left - 270;
+        if (ty + 120 > rect.height) ty = e.clientY - rect.top - 130;
+        if (tx < 0) tx = 10;
+        if (ty < 0) ty = 10;
+        tooltip.style.left = tx + "px";
+        tooltip.style.top = ty + "px";
       });
     });
   }
