@@ -213,6 +213,7 @@
   var showLabels = true;
   var zoomLevel = 1;
   var currentFilter = "all";
+  var hiddenRoutes = {};
 
   function render() {
     var h = "";
@@ -225,6 +226,7 @@
 
     routes.forEach(function(r, idx) {
       if (hiddenCities[r.from] || hiddenCities[r.to]) return;
+      if (hiddenRoutes[idx]) return;
       if (currentFilter === "flight" && r.type !== "flight") return;
       if (currentFilter === "rail" && r.type !== "rail") return;
       var a = cmap[r.from], b = cmap[r.to];
@@ -295,7 +297,15 @@
     h += '<button data-filter="flight">仅飞机</button>';
     h += '<button data-filter="rail">仅铁路</button>';
     h += '</div>';
-    h += '<label style="margin-bottom:0.5rem"><input type="checkbox" checked onchange="toggleLabels()"> 路程/价格</label>';
+    h += '<label style="margin-bottom:0.3rem"><input type="checkbox" checked onchange="toggleLabels()"> 路程/价格</label>';
+    h += '<button id="routeEditBtn" style="width:100%;padding:0.25rem 0;font-size:0.68rem;font-family:var(--font-sans);background:var(--bg-card);border:1px solid var(--border);border-radius:4px;color:var(--text-secondary);cursor:pointer;">详细设置 ▼</button>';
+    h += '<div id="routeEditPanel" style="display:none;max-height:250px;overflow-y:auto;margin-top:0.3rem;">';
+    routes.forEach(function(r, i) {
+      var isFlight = r.type === "flight";
+      var icon = isFlight ? "✈" : "🚄";
+      h += '<label style="font-size:0.65rem;padding:0.15rem 0.3rem;"><input type="checkbox" checked onchange="toggleRoute('+i+')">'+icon+' '+cmap[r.from].name+'→'+cmap[r.to].name+'</label>';
+    });
+    h += '</div>';
     var lastRegion = "";
     cities.forEach(function(c) {
       if (c.region !== lastRegion) {
@@ -315,8 +325,20 @@
         render();
       });
     });
+
+    document.getElementById("routeEditBtn").addEventListener("click", function() {
+      var panel = document.getElementById("routeEditPanel");
+      var show = panel.style.display === "none";
+      panel.style.display = show ? "block" : "none";
+      this.textContent = show ? "详细设置 ▲" : "详细设置 ▼";
+    });
   }
   buildSidebar();
+
+  window.toggleRoute = function(idx) {
+    hiddenRoutes[idx] = !hiddenRoutes[idx];
+    render();
+  };
 
   window.toggleCity = function(id) {
     hiddenCities[id] = !hiddenCities[id];
