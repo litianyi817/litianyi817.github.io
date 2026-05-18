@@ -188,7 +188,7 @@
     { from:"guangzhou",to:"hongkong",type:"rail",  dist:"140km", price:"¥80",   train:"G6581", info:"广深港高铁" },
     { from:"seoul",  to:"busan",    type:"rail",   dist:"330km", price:"¥300",  train:"KTX101",info:"京釜高铁" },
     { from:"tokyo",  to:"osaka",    type:"rail",   dist:"500km", price:"¥800",  train:"Nozomi1",info:"东海道新干线" },
-    { from:"beijing",to:"seoul",    type:"flight", dist:"950km", price:"¥1200", flight:"CA123", airline:"国航", plane:"A330" },
+    { from:"beijing",to:"seoul",    type:"flight", dist:"950km", price:"¥1200", flight:"CA123", airline:"国航", plane:"A330", transfer:true, transferCity:"大连", airline2:"南航", flight2:"CZ685" },
     { from:"beijing",to:"tokyo",    type:"flight", dist:"2100km",price:"¥2500", flight:"CA925", airline:"国航", plane:"B787" },
     { from:"shanghai",to:"tokyo",   type:"flight", dist:"1750km",price:"¥2100", flight:"MU523", airline:"东航", plane:"B777" },
     { from:"shanghai",to:"osaka",   type:"flight", dist:"1400km",price:"¥1800", flight:"CA857", airline:"国航", plane:"A321" },
@@ -202,18 +202,27 @@
     { from:"beijing",to:"chengdu",  type:"flight", dist:"1500km",price:"¥1100", flight:"CA411", airline:"国航", plane:"A330" },
     { from:"beijing",to:"guangzhou",type:"flight", dist:"1900km",price:"¥1400", flight:"CZ312", airline:"南航", plane:"B787" },
     { from:"shanghai",to:"xian",    type:"flight", dist:"1100km",price:"¥850",  flight:"MU215", airline:"东航", plane:"A320" },
-    { from:"guangzhou",to:"seoul",  type:"flight", dist:"2100km",price:"¥1900", flight:"CZ337", airline:"南航", plane:"A330" }
+    { from:"guangzhou",to:"seoul",  type:"flight", dist:"2100km",price:"¥1900", flight:"CZ337", airline:"南航", plane:"A330" },
+    { from:"guangzhou",to:"tokyo",   type:"flight", dist:"2800km",price:"¥2300", flight:"CZ385", airline:"南航", plane:"B787", transfer:true, transferCity:"上海浦东", airline2:"东航", flight2:"MU523" },
+    { from:"seoul",    to:"tokyo",   type:"flight", dist:"1150km",price:"¥1500", flight:"KE701", airline:"大韩", plane:"B777" },
+    { from:"busan",    to:"jeju",    type:"flight", dist:"290km", price:"¥400",  flight:"KE1005",airline:"大韩", plane:"A320" }
   ];
+
+  // Default visible route indices (成广/广港/广首尔/广东京/首尔东京/釜山济州)
+  var defaultVisible = [15,4,21,22,23,24];
+  var hiddenRoutes = {};
+  routes.forEach(function(r, i) {
+    if (defaultVisible.indexOf(i) === -1) hiddenRoutes[i] = true;
+  });
 
   var svg = document.getElementById("planSvg");
   var tooltip = document.getElementById("tooltip");
   var mapWrap = document.getElementById("planMapWrap");
   var cmap = {}; cities.forEach(function(c){ cmap[c.id]=c; });
-  var hiddenCities = { jeju:true, xian:true, beijing:true };
+  var hiddenCities = { xian:true, beijing:true };
   var showLabels = true;
   var zoomLevel = 1;
-  var currentFilter = "all";
-  var hiddenRoutes = {};
+  var currentFilter = "flight";
 
   function render() {
     var h = "";
@@ -266,13 +275,18 @@
         var y = e.clientY - rect.top - 10;
         var isFlight = r.type === "flight";
         var cls = isFlight ? "tt-flight" : "tt-rail";
+        var transferHtml = '';
+        if (r.transfer) {
+          transferHtml = '<br><span style="color:#f59e0b">⚠ 需转机：'+r.transferCity+'</span><br>第一程：'+r.airline+' '+r.flight+'　第二程：'+r.airline2+' '+r.flight2;
+        }
         tooltip.innerHTML =
           '<span class="'+cls+'">'+(isFlight?'✈ 航班':'🚄 列车')+'</span><br>'+
           '<strong>'+cmap[r.from].name+' → '+cmap[r.to].name+'</strong><br>'+
           '距离：'+r.dist+'　票价：'+r.price+'<br>'+
           (isFlight
-            ? '航班号：'+r.flight+'　航司：'+r.airline+'<br>机型：'+r.plane
-            : '车次：'+r.train+'　线路：'+r.info);
+            ? (r.transfer ? '' : '航班号：'+r.flight+'　航司：'+r.airline+'<br>机型：'+r.plane)
+            : '车次：'+r.train+'　线路：'+r.info)+
+          transferHtml;
         tooltip.style.display = "block";
         tooltip.style.left = x + "px";
         tooltip.style.top = y + "px";
@@ -293,8 +307,8 @@
     var sidebar = document.getElementById("planSidebar");
     var regions = { china:"CHINA", korea:"KOREA", japan:"JAPAN" };
     var h = '<div class="plan-filter">';
-    h += '<button data-filter="all" class="active">全部</button>';
-    h += '<button data-filter="flight">仅飞机</button>';
+    h += '<button data-filter="all">全部</button>';
+    h += '<button data-filter="flight" class="active">仅飞机</button>';
     h += '<button data-filter="rail">仅铁路</button>';
     h += '</div>';
     h += '<label style="margin-bottom:0.3rem"><input type="checkbox" checked onchange="toggleLabels()"> 路程/价格</label>';
