@@ -188,24 +188,24 @@
     { from:"guangzhou",to:"hongkong",type:"rail",  dist:"140km", price:"¥80",   train:"G6581", info:"广深港高铁" },
     { from:"seoul",  to:"busan",    type:"rail",   dist:"330km", price:"¥300",  train:"KTX101",info:"京釜高铁" },
     { from:"tokyo",  to:"osaka",    type:"rail",   dist:"500km", price:"¥800",  train:"Nozomi1",info:"东海道新干线" },
-    { from:"beijing",to:"seoul",    type:"flight", dist:"950km", price:"¥1200", flight:"CA123", airline:"国航", plane:"A330", transfer:true, transferCity:"大连", airline2:"南航", flight2:"CZ685" },
-    { from:"beijing",to:"tokyo",    type:"flight", dist:"2100km",price:"¥2500", flight:"CA925", airline:"国航", plane:"B787" },
-    { from:"shanghai",to:"tokyo",   type:"flight", dist:"1750km",price:"¥2100", flight:"MU523", airline:"东航", plane:"B777" },
-    { from:"shanghai",to:"osaka",   type:"flight", dist:"1400km",price:"¥1800", flight:"CA857", airline:"国航", plane:"A321" },
-    { from:"busan",  to:"osaka",    type:"flight", dist:"550km", price:"¥900",  flight:"KE731", airline:"大韩", plane:"A320" },
-    { from:"hongkong",to:"seoul",   type:"flight", dist:"2050km",price:"¥2200", flight:"CX416", airline:"国泰", plane:"A350" },
-    { from:"hongkong",to:"tokyo",   type:"flight", dist:"2800km",price:"¥2800", flight:"CX500", airline:"国泰", plane:"B777" },
+    { from:"beijing",to:"seoul",    type:"flight", dist:"950km", price:"¥1200", flight:"CA123", airline:"中国国际航空", plane:"A330", size:"大", transfer:true, transferCity:"大连", airline2:"中国南方航空", flight2:"CZ685", size2:"中" },
+    { from:"beijing",to:"tokyo",    type:"flight", dist:"2100km",price:"¥2500", flight:"CA925", airline:"中国国际航空", plane:"B787", size:"大" },
+    { from:"shanghai",to:"tokyo",   type:"flight", dist:"1750km",price:"¥2100", flight:"MU523", airline:"中国东方航空", plane:"B777", size:"大" },
+    { from:"shanghai",to:"osaka",   type:"flight", dist:"1400km",price:"¥1800", flight:"CA857", airline:"中国国际航空", plane:"A321", size:"中" },
+    { from:"busan",  to:"osaka",    type:"flight", dist:"550km", price:"¥900",  flight:"KE731", airline:"大韩航空", plane:"A320", size:"中" },
+    { from:"hongkong",to:"seoul",   type:"flight", dist:"2050km",price:"¥2200", flight:"CX416", airline:"国泰航空", plane:"A350", size:"大" },
+    { from:"hongkong",to:"tokyo",   type:"flight", dist:"2800km",price:"¥2800", flight:"CX500", airline:"国泰航空", plane:"B777", size:"大" },
     { from:"chengdu",to:"guangzhou",type:"rail",   dist:"1350km",price:"¥540",  train:"D1801", info:"成贵广高铁" },
-    { from:"chengdu",to:"guangzhou",type:"flight", dist:"1200km",price:"¥900",  flight:"CA431", airline:"国航", plane:"A320" },
+    { from:"chengdu",to:"guangzhou",type:"flight", dist:"1200km",price:"¥900",  flight:"CA431", airline:"中国国际航空", plane:"A320", size:"中" },
     { from:"xian",   to:"shanghai", type:"rail",   dist:"1200km",price:"¥520",  train:"G1918", info:"徐兰高铁" },
-    { from:"xian",   to:"guangzhou",type:"flight", dist:"1300km",price:"¥950",  flight:"CZ322", airline:"南航", plane:"B738" },
-    { from:"beijing",to:"chengdu",  type:"flight", dist:"1500km",price:"¥1100", flight:"CA411", airline:"国航", plane:"A330" },
-    { from:"beijing",to:"guangzhou",type:"flight", dist:"1900km",price:"¥1400", flight:"CZ312", airline:"南航", plane:"B787" },
-    { from:"shanghai",to:"xian",    type:"flight", dist:"1100km",price:"¥850",  flight:"MU215", airline:"东航", plane:"A320" },
-    { from:"guangzhou",to:"seoul",  type:"flight", dist:"2100km",price:"¥1900", flight:"CZ337", airline:"南航", plane:"A330" },
-    { from:"guangzhou",to:"tokyo",   type:"flight", dist:"2800km",price:"¥2300", flight:"CZ385", airline:"南航", plane:"B787", transfer:true, transferCity:"上海浦东", airline2:"东航", flight2:"MU523" },
-    { from:"seoul",    to:"tokyo",   type:"flight", dist:"1150km",price:"¥1500", flight:"KE701", airline:"大韩", plane:"B777" },
-    { from:"busan",    to:"jeju",    type:"flight", dist:"290km", price:"¥400",  flight:"KE1005",airline:"大韩", plane:"A320" }
+    { from:"xian",   to:"guangzhou",type:"flight", dist:"1300km",price:"¥950",  flight:"CZ322", airline:"中国南方航空", plane:"B738", size:"中" },
+    { from:"beijing",to:"chengdu",  type:"flight", dist:"1500km",price:"¥1100", flight:"CA411", airline:"中国国际航空", plane:"A330", size:"大" },
+    { from:"beijing",to:"guangzhou",type:"flight", dist:"1900km",price:"¥1400", flight:"CZ312", airline:"中国南方航空", plane:"B787", size:"大" },
+    { from:"shanghai",to:"xian",    type:"flight", dist:"1100km",price:"¥850",  flight:"MU215", airline:"中国东方航空", plane:"A320", size:"中" },
+    { from:"guangzhou",to:"seoul",  type:"flight", dist:"2100km",price:"¥1900", flight:"CZ337", airline:"中国南方航空", plane:"A330", size:"大" },
+    { from:"guangzhou",to:"tokyo",   type:"flight", dist:"2800km",price:"¥2300", flight:"CZ385", airline:"中国南方航空", plane:"B787", size:"大", transfer:true, transferCity:"上海浦东", airline2:"中国东方航空", flight2:"MU523", size2:"大" },
+    { from:"seoul",    to:"tokyo",   type:"flight", dist:"1150km",price:"¥1500", flight:"KE701", airline:"大韩航空", plane:"B777", size:"大" },
+    { from:"busan",    to:"jeju",    type:"flight", dist:"290km", price:"¥400",  flight:"KE1005",airline:"大韩航空", plane:"A320", size:"中" }
   ];
 
   // Default visible route indices (成广/广港/广首尔/广东京/首尔东京/釜山济州)
@@ -286,14 +286,16 @@
         var cls = isFlight ? "tt-flight" : "tt-rail";
         var transferHtml = '';
         if (r.transfer) {
-          transferHtml = '<br><span style="color:#f59e0b">⚠ 需转机：'+r.transferCity+'</span><br>第一程：'+r.airline+' '+r.flight+'　第二程：'+r.airline2+' '+r.flight2;
+          transferHtml = '<br><span style="color:#f59e0b">⚠ 转机：'+r.transferCity+'</span>'+
+            '<br>第一程：'+r.airline+' '+r.flight+'　'+r.plane+'（'+r.size+'）'+
+            '<br>第二程：'+r.airline2+' '+r.flight2+'　'+r.size2+'（'+r.size2+'）';
         }
         tooltip.innerHTML =
           '<span class="'+cls+'">'+(isFlight?'✈ 航班':'🚄 列车')+'</span><br>'+
           '<strong>'+cmap[r.from].name+' → '+cmap[r.to].name+'</strong><br>'+
           '距离：'+r.dist+'　票价：'+r.price+'<br>'+
           (isFlight
-            ? (r.transfer ? '' : '航班号：'+r.flight+'　航司：'+r.airline+'<br>机型：'+r.plane+'　舱位：经济舱')
+            ? (r.transfer ? '' : '航班号：'+r.flight+'　航司：'+r.airline+'<br>机型：'+r.plane+'（'+r.size+'）')
             : '车次：'+r.train+'<br>线路：'+r.info+'　席别：二等座')+
           transferHtml;
         tooltip.style.display = "block";
