@@ -3,84 +3,121 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Litianyi's travel plan - interactive route map.">
+  <meta name="description" content="Litianyi's travel plan - interactive route map with flight and rail details.">
   <title>Plan - Litianyi</title>
   <link rel="preload" href="/assets/bg.png" as="image">
-  <link rel="stylesheet" href="/style.css?v=20">
+  <link rel="stylesheet" href="/style.css?v=21">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>L</text></svg>">
   <style>
+    .plan-glass { max-width: 1050px !important; }
     .plan-wrap {
-      max-width: 1000px;
-      margin: 0 auto;
       display: flex;
       gap: 1rem;
       align-items: flex-start;
+      position: relative;
     }
-    .plan-map {
-      flex: 1;
-      min-width: 0;
-    }
-    .plan-map svg {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
+    .plan-map { flex: 1; min-width: 0; position: relative; }
+    .plan-map svg { width: 100%; height: auto; display: block; }
     .plan-sidebar {
-      width: 150px;
+      width: 140px;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
+      gap: 0.3rem;
+    }
+    .plan-filter {
+      display: flex;
+      gap: 0.3rem;
+      margin-bottom: 0.5rem;
+    }
+    .plan-filter button {
+      padding: 0.2rem 0.5rem;
+      font-size: 0.68rem;
+      font-family: var(--font-sans);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .plan-filter button.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
     }
     .plan-sidebar label {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      font-size: 0.75rem;
+      gap: 0.35rem;
+      font-size: 0.72rem;
       color: var(--text-secondary);
       font-family: var(--font-sans);
       cursor: pointer;
-      padding: 0.3rem 0.5rem;
-      border-radius: 6px;
+      padding: 0.25rem 0.4rem;
+      border-radius: 5px;
       transition: all 0.15s ease;
     }
-    .plan-sidebar label:hover {
-      background: var(--bg-card);
-      color: var(--text-primary);
-    }
-    .plan-sidebar input[type=checkbox] {
-      accent-color: var(--accent);
-      width: 13px;
-      height: 13px;
-    }
+    .plan-sidebar label:hover { background: var(--bg-card); color: var(--text-primary); }
+    .plan-sidebar input[type=checkbox] { accent-color: var(--accent); width: 12px; height: 12px; }
     .plan-sidebar .region-title {
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.06em;
       color: var(--text-muted);
-      margin-top: 0.5rem;
-      margin-bottom: 0.15rem;
-      padding-left: 0.5rem;
+      margin-top: 0.4rem;
+      margin-bottom: 0.1rem;
+      padding-left: 0.4rem;
     }
     .plan-legend {
       display: flex;
-      gap: 1.2rem;
+      gap: 1.5rem;
       justify-content: center;
       margin-top: 0.5rem;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
     }
     .plan-legend span { display: flex; align-items: center; gap: 0.3rem; }
-    .legend-rail { width: 20px; height: 2px; background: #3b82f6; border-radius: 1px; }
-    .legend-flight { width: 20px; height: 0; border-top: 1.5px dashed rgba(255,255,255,0.5); }
-    .legend-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .legend-rail { width: 24px; height: 2.5px; background: #3b82f6; border-radius: 1px; }
+    .legend-flight { width: 24px; height: 0; border-top: 2px dashed rgba(255,255,255,0.5); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+    /* Tooltip */
+    .tooltip {
+      display: none;
+      position: absolute;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.8rem;
+      z-index: 50;
+      pointer-events: none;
+      font-size: 0.75rem;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      line-height: 1.6;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      white-space: nowrap;
+    }
+    .tooltip .tt-flight { color: rgba(255,255,255,0.7); font-size: 0.68rem; }
+    .tooltip .tt-rail { color: #60a5fa; font-size: 0.68rem; }
+    .tooltip strong { color: var(--text-primary); }
+
+    .route-rail { stroke: #3b82f6; stroke-width: 2.5; fill: none; opacity: 0.75; cursor: pointer; }
+    .route-flight { stroke: rgba(255,255,255,0.55); stroke-width: 2; stroke-dasharray: 7 5; fill: none; cursor: pointer; }
+    .route-hit { stroke: transparent; stroke-width: 18; fill: none; cursor: pointer; }
+    .route-label { fill: var(--text-muted); font-size: 10px; font-family: var(--font-sans); }
+    .city-dot { fill: var(--accent); stroke: var(--bg-primary); stroke-width: 2; }
+    .city-label { fill: var(--text-secondary); font-size: 14px; font-family: var(--font-sans); font-weight: 500; }
 
     @media (max-width: 768px) {
       .plan-wrap { flex-direction: column; }
-      .plan-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; gap: 0.25rem; }
-      .plan-sidebar .region-title { width: 100%; margin-top: 0.2rem; }
-      .plan-sidebar label { font-size: 0.7rem; padding: 0.2rem 0.4rem; }
+      .plan-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; gap: 0.2rem; }
+      .plan-sidebar .region-title { width: 100%; margin-top: 0.1rem; }
+      .plan-sidebar label { font-size: 0.68rem; padding: 0.15rem 0.3rem; }
+      .city-label { font-size: 11px; }
+      .route-label { font-size: 8px; }
     }
   </style>
 </head>
@@ -89,7 +126,7 @@
   <div id="header"></div>
 
   <main>
-    <div class="glass-panel">
+    <div class="glass-panel plan-glass">
       <div class="glass-panel-header">
         <a href="/" class="back-link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -100,9 +137,16 @@
       </div>
       <div class="glass-panel-body">
         <div class="plan-wrap">
-          <div class="plan-sidebar" id="planSidebar"></div>
-          <div class="plan-map">
-            <svg viewBox="0 0 900 580" xmlns="http://www.w3.org/2000/svg" id="planSvg"></svg>
+          <div class="plan-sidebar" id="planSidebar">
+            <div class="plan-filter">
+              <button data-filter="all" class="active">全部</button>
+              <button data-filter="flight">仅飞机</button>
+              <button data-filter="rail">仅铁路</button>
+            </div>
+          </div>
+          <div class="plan-map" id="planMapWrap">
+            <svg viewBox="0 0 1000 680" xmlns="http://www.w3.org/2000/svg" id="planSvg"></svg>
+            <div class="tooltip" id="tooltip"></div>
             <div class="plan-legend">
               <span><span class="legend-rail"></span> 铁路</span>
               <span><span class="legend-flight"></span> 航空</span>
@@ -116,79 +160,123 @@
 
   <div id="footer"></div>
 
-  <script src="/script.js?v=20"></script>
+  <script src="/script.js?v=21"></script>
   <script>
 (function() {
+  // labelOff: [dx, dy, anchor] — anchor: "start"=left of dot, "end"=right of dot
   var cities = [
-    { id:"beijing",  name:"北京", x:450,y:90,  region:"china" },
-    { id:"xian",     name:"西安", x:350,y:200, region:"china" },
-    { id:"chengdu",  name:"成都", x:230,y:310, region:"china" },
-    { id:"shanghai", name:"上海", x:540,y:260, region:"china" },
-    { id:"guangzhou",name:"广州", x:400,y:420, region:"china" },
-    { id:"hongkong", name:"香港", x:440,y:460, region:"china" },
-    { id:"seoul",    name:"首尔", x:580,y:75,  region:"korea" },
-    { id:"busan",    name:"釜山", x:625,y:170, region:"korea" },
-    { id:"jeju",     name:"济州", x:545,y:195, region:"korea" },
-    { id:"tokyo",    name:"东京", x:750,y:130, region:"japan" },
-    { id:"osaka",    name:"大阪", x:715,y:210, region:"japan" }
+    { id:"beijing",  name:"北京", x:500,y:100, lx:12,ly:-8,la:"start" },
+    { id:"xian",     name:"西安", x:380,y:230, lx:-10,ly:12,la:"end" },
+    { id:"chengdu",  name:"成都", x:240,y:345, lx:-10,ly:-6,la:"end" },
+    { id:"shanghai", name:"上海", x:610,y:285, lx:12,ly:-10,la:"start" },
+    { id:"guangzhou",name:"广州", x:450,y:465, lx:12,ly:6,la:"start" },
+    { id:"hongkong", name:"香港", x:490,y:510, lx:12,ly:-6,la:"start" },
+    { id:"seoul",    name:"首尔", x:650,y:85,  lx:12,ly:-6,la:"start" },
+    { id:"busan",    name:"釜山", x:695,y:180, lx:-10,ly:-8,la:"end" },
+    { id:"jeju",     name:"济州", x:665,y:235, lx:12,ly:4,la:"start" },
+    { id:"tokyo",    name:"东京", x:835,y:140, lx:12,ly:-6,la:"start" },
+    { id:"osaka",    name:"大阪", x:795,y:225, lx:-10,ly:-8,la:"end" }
   ];
 
   var routes = [
-    { from:"beijing",to:"xian",     type:"rail",   dist:"910km", price:"¥515" },
-    { from:"beijing",to:"shanghai", type:"rail",   dist:"1210km",price:"¥553" },
-    { from:"xian",   to:"chengdu",  type:"rail",   dist:"660km", price:"¥263" },
-    { from:"shanghai",to:"guangzhou",type:"rail",  dist:"1400km",price:"¥730" },
-    { from:"guangzhou",to:"hongkong",type:"rail",  dist:"140km", price:"¥80" },
-    { from:"seoul",  to:"busan",    type:"rail",   dist:"330km", price:"¥300" },
-    { from:"tokyo",  to:"osaka",    type:"rail",   dist:"500km", price:"¥800" },
-    { from:"beijing",to:"seoul",    type:"flight", dist:"950km", price:"¥1200" },
-    { from:"beijing",to:"tokyo",    type:"flight", dist:"2100km",price:"¥2500" },
-    { from:"shanghai",to:"tokyo",   type:"flight", dist:"1750km",price:"¥2100" },
-    { from:"shanghai",to:"osaka",   type:"flight", dist:"1400km",price:"¥1800" },
-    { from:"busan",  to:"osaka",    type:"flight", dist:"550km", price:"¥900" }
+    { from:"beijing",to:"xian",     type:"rail",   dist:"910km", price:"¥515",  train:"G655",  info:"京广高铁" },
+    { from:"beijing",to:"shanghai", type:"rail",   dist:"1210km",price:"¥553",  train:"G1",    info:"京沪高铁" },
+    { from:"xian",   to:"chengdu",  type:"rail",   dist:"660km", price:"¥263",  train:"D1917", info:"西成高铁" },
+    { from:"shanghai",to:"guangzhou",type:"rail",  dist:"1400km",price:"¥730",  train:"G85",   info:"沪广高铁" },
+    { from:"guangzhou",to:"hongkong",type:"rail",  dist:"140km", price:"¥80",   train:"G6581", info:"广深港高铁" },
+    { from:"seoul",  to:"busan",    type:"rail",   dist:"330km", price:"¥300",  train:"KTX101",info:"京釜高铁" },
+    { from:"tokyo",  to:"osaka",    type:"rail",   dist:"500km", price:"¥800",  train:"Nozomi1",info:"东海道新干线" },
+    { from:"beijing",to:"seoul",    type:"flight", dist:"950km", price:"¥1200", flight:"CA123", airline:"国航", plane:"A330" },
+    { from:"beijing",to:"tokyo",    type:"flight", dist:"2100km",price:"¥2500", flight:"CA925", airline:"国航", plane:"B787" },
+    { from:"shanghai",to:"tokyo",   type:"flight", dist:"1750km",price:"¥2100", flight:"MU523", airline:"东航", plane:"B777" },
+    { from:"shanghai",to:"osaka",   type:"flight", dist:"1400km",price:"¥1800", flight:"CA857", airline:"国航", plane:"A321" },
+    { from:"busan",  to:"osaka",    type:"flight", dist:"550km", price:"¥900",  flight:"KE731", airline:"大韩", plane:"A320" },
+    { from:"hongkong",to:"seoul",   type:"flight", dist:"2050km",price:"¥2200", flight:"CX416", airline:"国泰", plane:"A350" },
+    { from:"hongkong",to:"tokyo",   type:"flight", dist:"2800km",price:"¥2800", flight:"CX500", airline:"国泰", plane:"B777" }
   ];
 
-  var hiddenCities = {};
   var svg = document.getElementById("planSvg");
+  var tooltip = document.getElementById("tooltip");
+  var mapWrap = document.getElementById("planMapWrap");
   var cmap = {}; cities.forEach(function(c){ cmap[c.id]=c; });
+  var hiddenCities = {};
+  var currentFilter = "all";
 
   function render() {
     var h = "";
-    // Background hints
-    h += '<text x="380" y="30" fill="var(--text-muted)" font-size="11" font-weight="600" letter-spacing="0.15em">CHINA</text>';
-    h += '<text x="585" y="55" fill="var(--text-muted)" font-size="11" font-weight="600" letter-spacing="0.15em">KOREA</text>';
-    h += '<text x="725" y="110" fill="var(--text-muted)" font-size="11" font-weight="600" letter-spacing="0.15em">JAPAN</text>';
-    h += '<text x="570" y="150" fill="var(--text-muted)" font-size="9" letter-spacing="0.15em">黄 海</text>';
-    h += '<text x="650" y="230" fill="var(--text-muted)" font-size="9" letter-spacing="0.15em">东 海</text>';
+    // Region labels
+    h += '<text x="420" y="35" fill="var(--text-muted)" font-size="12" font-weight="600" letter-spacing="0.15em">CHINA</text>';
+    h += '<text x="655" y="60" fill="var(--text-muted)" font-size="12" font-weight="600" letter-spacing="0.15em">KOREA</text>';
+    h += '<text x="810" y="115" fill="var(--text-muted)" font-size="12" font-weight="600" letter-spacing="0.15em">JAPAN</text>';
+    h += '<text x="630" y="155" fill="var(--text-muted)" font-size="10" letter-spacing="0.18em">黄 海</text>';
+    h += '<text x="720" y="260" fill="var(--text-muted)" font-size="10" letter-spacing="0.18em">东 海</text>';
 
-    // Routes
-    routes.forEach(function(r) {
+    routes.forEach(function(r, idx) {
       if (hiddenCities[r.from] || hiddenCities[r.to]) return;
+      if (currentFilter === "flight" && r.type !== "flight") return;
+      if (currentFilter === "rail" && r.type !== "rail") return;
       var a = cmap[r.from], b = cmap[r.to];
       var isFlight = r.type === "flight";
       var cls = isFlight ? "flight" : "rail";
+      // Invisible wide hit area
+      h += '<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" class="route-hit" data-route="'+idx+'"/>';
+      // Visible route line
       h += '<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" class="route-'+cls+'"/>';
-      // Label at midpoint
+      // Label
       var mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
-      var offX = isFlight ? 8 : -10, offY = isFlight ? -10 : 8;
-      h += '<text x="'+(mx+offX)+'" y="'+(my+offY)+'" class="route-label">'+r.dist+' · '+r.price+'</text>';
+      var offY = isFlight ? -12 : 14;
+      h += '<text x="'+mx+'" y="'+(my+offY)+'" text-anchor="middle" class="route-label">'+r.dist+' · '+r.price+'</text>';
     });
 
-    // Cities
     cities.forEach(function(c) {
       if (hiddenCities[c.id]) return;
-      h += '<circle cx="'+c.x+'" cy="'+c.y+'" r="5" class="city-dot" id="dot-'+c.id+'"/>';
-      h += '<text x="'+(c.x+8)+'" y="'+(c.y-6)+'" class="city-label">'+c.name+'</text>';
+      var ax = c.la === "start" ? c.x+c.lx : c.x+c.lx;
+      var anchor = c.la === "start" ? "start" : "end";
+      h += '<circle cx="'+c.x+'" cy="'+c.y+'" r="5.5" class="city-dot" id="dot-'+c.id+'"/>';
+      h += '<text x="'+ax+'" y="'+(c.y+c.ly)+'" text-anchor="'+anchor+'" class="city-label">'+c.name+'</text>';
     });
 
     svg.innerHTML = h;
+    bindRouteHover();
+  }
+
+  function bindRouteHover() {
+    svg.querySelectorAll(".route-hit").forEach(function(line) {
+      var idx = parseInt(line.dataset.route);
+      var r = routes[idx];
+      line.addEventListener("mouseenter", function(e) {
+        var rect = mapWrap.getBoundingClientRect();
+        var x = e.clientX - rect.left + 14;
+        var y = e.clientY - rect.top - 10;
+        var isFlight = r.type === "flight";
+        var cls = isFlight ? "tt-flight" : "tt-rail";
+        tooltip.innerHTML =
+          '<span class="'+cls+'">'+(isFlight?'✈ 航班':'🚄 列车')+'</span><br>'+
+          '<strong>'+cmap[r.from].name+' → '+cmap[r.to].name+'</strong><br>'+
+          '距离：'+r.dist+'　票价：'+r.price+'<br>'+
+          (isFlight
+            ? '航班号：'+r.flight+'　航司：'+r.airline+'<br>机型：'+r.plane
+            : '车次：'+r.train+'　线路：'+r.info);
+        tooltip.style.display = "block";
+        tooltip.style.left = x + "px";
+        tooltip.style.top = y + "px";
+      });
+      line.addEventListener("mouseleave", function() {
+        tooltip.style.display = "none";
+      });
+      line.addEventListener("mousemove", function(e) {
+        var rect = mapWrap.getBoundingClientRect();
+        tooltip.style.left = (e.clientX - rect.left + 14) + "px";
+        tooltip.style.top = (e.clientY - rect.top - 10) + "px";
+      });
+    });
   }
 
   // Sidebar
   var sidebar = document.getElementById("planSidebar");
   var regions = { china:"CHINA", korea:"KOREA", japan:"JAPAN" };
   var lastRegion = "";
-  var sh = "";
+  var sh = sidebar.querySelector(".plan-filter").outerHTML;
   cities.forEach(function(c) {
     if (c.region !== lastRegion) {
       sh += '<span class="region-title">'+regions[c.region]+'</span>';
@@ -198,39 +286,23 @@
   });
   sidebar.innerHTML = sh;
 
+  // Filter buttons
+  sidebar.querySelectorAll(".plan-filter button").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      sidebar.querySelectorAll(".plan-filter button").forEach(function(b){ b.classList.remove("active"); });
+      this.classList.add("active");
+      currentFilter = this.dataset.filter;
+      render();
+    });
+  });
+
   window.toggleCity = function(id) {
     hiddenCities[id] = !hiddenCities[id];
-    var dot = document.getElementById("dot-"+id);
     render();
   };
 
   render();
 })();
   </script>
-  <style>
-    .route-rail {
-      stroke: #3b82f6;
-      stroke-width: 2;
-      fill: none;
-      opacity: 0.7;
-    }
-    .route-flight {
-      stroke: rgba(255,255,255,0.55);
-      stroke-width: 1.5;
-      stroke-dasharray: 6 5;
-      fill: none;
-    }
-    .route-label {
-      fill: var(--text-muted);
-      font-size: 9px;
-      font-family: var(--font-sans);
-    }
-    .city-dot { fill: var(--accent); stroke: var(--bg-primary); stroke-width: 1.5; }
-    .city-label { fill: var(--text-secondary); font-size: 13px; font-family: var(--font-sans); }
-    @media (max-width: 600px) {
-      .city-label { font-size: 10px; }
-      .route-label { font-size: 7px; }
-    }
-  </style>
 </body>
 </html>
