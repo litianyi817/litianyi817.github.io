@@ -136,7 +136,6 @@
           返回首页
         </a>
         <h1>Plan</h1>
-        <p>旅行规划 · 东亚路线图</p>
       </div>
       <div class="glass-panel-body">
         <div class="plan-wrap">
@@ -168,17 +167,17 @@
 (function() {
   // labelOff: [dx, dy, anchor] — anchor: "start"=left of dot, "end"=right of dot
   var cities = [
-    { id:"beijing",  name:"北京", x:500,y:100, lx:12,ly:-8,la:"start" },
-    { id:"xian",     name:"西安", x:380,y:230, lx:-10,ly:12,la:"end" },
-    { id:"chengdu",  name:"成都", x:240,y:345, lx:-10,ly:-6,la:"end" },
-    { id:"shanghai", name:"上海", x:610,y:285, lx:12,ly:-10,la:"start" },
-    { id:"guangzhou",name:"广州", x:450,y:465, lx:12,ly:6,la:"start" },
-    { id:"hongkong", name:"香港", x:490,y:510, lx:12,ly:-6,la:"start" },
-    { id:"seoul",    name:"首尔", x:650,y:85,  lx:12,ly:-6,la:"start" },
-    { id:"busan",    name:"釜山", x:695,y:180, lx:-10,ly:-8,la:"end" },
-    { id:"jeju",     name:"济州", x:665,y:235, lx:12,ly:4,la:"start" },
-    { id:"tokyo",    name:"东京", x:835,y:140, lx:12,ly:-6,la:"start" },
-    { id:"osaka",    name:"大阪", x:795,y:225, lx:-10,ly:-8,la:"end" }
+    { id:"beijing",  name:"北京", x:500,y:100, lx:12,ly:-8,la:"start", region:"china" },
+    { id:"xian",     name:"西安", x:380,y:230, lx:-10,ly:12,la:"end",   region:"china" },
+    { id:"chengdu",  name:"成都", x:240,y:345, lx:-10,ly:-6,la:"end",   region:"china" },
+    { id:"shanghai", name:"上海", x:610,y:285, lx:12,ly:-10,la:"start", region:"china" },
+    { id:"guangzhou",name:"广州", x:450,y:465, lx:12,ly:6,la:"start",   region:"china" },
+    { id:"hongkong", name:"香港", x:490,y:510, lx:12,ly:-6,la:"start",  region:"china" },
+    { id:"seoul",    name:"首尔", x:650,y:85,  lx:12,ly:-6,la:"start",  region:"korea" },
+    { id:"busan",    name:"釜山", x:695,y:180, lx:-10,ly:-8,la:"end",   region:"korea" },
+    { id:"jeju",     name:"济州", x:665,y:235, lx:12,ly:4,la:"start",   region:"korea" },
+    { id:"tokyo",    name:"东京", x:835,y:140, lx:12,ly:-6,la:"start",  region:"japan" },
+    { id:"osaka",    name:"大阪", x:795,y:225, lx:-10,ly:-8,la:"end",   region:"japan" }
   ];
 
   var routes = [
@@ -211,6 +210,7 @@
   var mapWrap = document.getElementById("planMapWrap");
   var cmap = {}; cities.forEach(function(c){ cmap[c.id]=c; });
   var hiddenCities = { jeju:true, xian:true, beijing:true };
+  var showLabels = true;
   var zoomLevel = 1;
   var currentFilter = "all";
 
@@ -235,9 +235,11 @@
       // Visible route line
       h += '<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" class="route-'+cls+'"/>';
       // Label
-      var mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
-      var offY = isFlight ? -12 : 14;
-      h += '<text x="'+mx+'" y="'+(my+offY)+'" text-anchor="middle" class="route-label">'+r.dist+' · '+r.price+'</text>';
+      if (showLabels) {
+        var mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+        var offY = isFlight ? -12 : 14;
+        h += '<text x="'+mx+'" y="'+(my+offY)+'" text-anchor="middle" class="route-label">'+r.dist+' · '+r.price+'</text>';
+      }
     });
 
     cities.forEach(function(c) {
@@ -293,6 +295,7 @@
     h += '<button data-filter="flight">仅飞机</button>';
     h += '<button data-filter="rail">仅铁路</button>';
     h += '</div>';
+    h += '<label style="margin-bottom:0.5rem"><input type="checkbox" checked onchange="toggleLabels()"> 路程/价格</label>';
     var lastRegion = "";
     cities.forEach(function(c) {
       if (c.region !== lastRegion) {
@@ -317,6 +320,10 @@
 
   window.toggleCity = function(id) {
     hiddenCities[id] = !hiddenCities[id];
+    render();
+  };
+  window.toggleLabels = function() {
+    showLabels = !showLabels;
     render();
   };
 
