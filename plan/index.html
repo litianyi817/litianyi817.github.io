@@ -285,42 +285,51 @@
   }
 
   // Sidebar
-  var sidebar = document.getElementById("planSidebar");
-  var regions = { china:"CHINA", korea:"KOREA", japan:"JAPAN" };
-  var lastRegion = "";
-  var sh = sidebar.querySelector(".plan-filter").outerHTML;
-  cities.forEach(function(c) {
-    if (c.region !== lastRegion) {
-      sh += '<span class="region-title">'+regions[c.region]+'</span>';
-      lastRegion = c.region;
-    }
-    var chk = hiddenCities[c.id] ? '' : ' checked';
-    sh += '<label><input type="checkbox"'+chk+' onchange="toggleCity(\''+c.id+'\')">'+c.name+'</label>';
-  });
-  sidebar.innerHTML = sh;
-
-  // Filter buttons
-  sidebar.querySelectorAll(".plan-filter button").forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      sidebar.querySelectorAll(".plan-filter button").forEach(function(b){ b.classList.remove("active"); });
-      this.classList.add("active");
-      currentFilter = this.dataset.filter;
-      render();
+  function buildSidebar() {
+    var sidebar = document.getElementById("planSidebar");
+    var regions = { china:"CHINA", korea:"KOREA", japan:"JAPAN" };
+    var h = '<div class="plan-filter">';
+    h += '<button data-filter="all" class="active">全部</button>';
+    h += '<button data-filter="flight">仅飞机</button>';
+    h += '<button data-filter="rail">仅铁路</button>';
+    h += '</div>';
+    var lastRegion = "";
+    cities.forEach(function(c) {
+      if (c.region !== lastRegion) {
+        h += '<span class="region-title">'+regions[c.region]+'</span>';
+        lastRegion = c.region;
+      }
+      var chk = hiddenCities[c.id] ? '' : ' checked';
+      h += '<label><input type="checkbox"'+chk+' onchange="toggleCity(\''+c.id+'\')">'+c.name+'</label>';
     });
-  });
+    sidebar.innerHTML = h;
+
+    sidebar.querySelectorAll(".plan-filter button").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        sidebar.querySelectorAll(".plan-filter button").forEach(function(b){ b.classList.remove("active"); });
+        this.classList.add("active");
+        currentFilter = this.dataset.filter;
+        render();
+      });
+    });
+  }
+  buildSidebar();
 
   window.toggleCity = function(id) {
     hiddenCities[id] = !hiddenCities[id];
     render();
   };
 
-  // Mouse wheel zoom
+  // Mouse wheel zoom centered on cursor
   mapWrap.addEventListener("wheel", function(e) {
     e.preventDefault();
-    var delta = e.deltaY > 0 ? -0.1 : 0.1;
-    zoomLevel = Math.max(0.6, Math.min(2.2, zoomLevel + delta));
+    var rect = mapWrap.getBoundingClientRect();
+    var ox = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+    var oy = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+    var delta = e.deltaY > 0 ? -0.12 : 0.12;
+    zoomLevel = Math.max(0.6, Math.min(2.5, zoomLevel + delta));
     svg.style.transform = "scale(" + zoomLevel + ")";
-    svg.style.transformOrigin = "top left";
+    svg.style.transformOrigin = ox + "% " + oy + "%";
   }, { passive: false });
 
   render();
