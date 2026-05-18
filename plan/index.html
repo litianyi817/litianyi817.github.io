@@ -16,7 +16,7 @@
       align-items: flex-start;
       position: relative;
     }
-    .plan-map { flex: 1; min-width: 0; position: relative; }
+    .plan-map { flex: 1; min-width: 0; position: relative; overflow: hidden; }
     .plan-map svg { width: 100%; height: auto; display: block; }
     .plan-sidebar {
       width: 155px;
@@ -210,7 +210,8 @@
   var tooltip = document.getElementById("tooltip");
   var mapWrap = document.getElementById("planMapWrap");
   var cmap = {}; cities.forEach(function(c){ cmap[c.id]=c; });
-  var hiddenCities = {};
+  var hiddenCities = { jeju:true, xian:true, beijing:true };
+  var zoomLevel = 1;
   var currentFilter = "all";
 
   function render() {
@@ -293,7 +294,8 @@
       sh += '<span class="region-title">'+regions[c.region]+'</span>';
       lastRegion = c.region;
     }
-    sh += '<label><input type="checkbox" checked onchange="toggleCity(\''+c.id+'\')">'+c.name+'</label>';
+    var chk = hiddenCities[c.id] ? '' : ' checked';
+    sh += '<label><input type="checkbox"'+chk+' onchange="toggleCity(\''+c.id+'\')">'+c.name+'</label>';
   });
   sidebar.innerHTML = sh;
 
@@ -311,6 +313,15 @@
     hiddenCities[id] = !hiddenCities[id];
     render();
   };
+
+  // Mouse wheel zoom
+  mapWrap.addEventListener("wheel", function(e) {
+    e.preventDefault();
+    var delta = e.deltaY > 0 ? -0.1 : 0.1;
+    zoomLevel = Math.max(0.6, Math.min(2.2, zoomLevel + delta));
+    svg.style.transform = "scale(" + zoomLevel + ")";
+    svg.style.transformOrigin = "top left";
+  }, { passive: false });
 
   render();
 })();
