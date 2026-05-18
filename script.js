@@ -3,8 +3,8 @@
   const headerEl = document.getElementById("header");
   const footerEl = document.getElementById("footer");
 
-  if (headerEl) fetch("/components/header.html?v=34").then(r => r.text()).then(h => headerEl.innerHTML = h);
-  if (footerEl) fetch("/components/footer.html?v=34").then(r => r.text()).then(function (h) {
+  if (headerEl) fetch("/components/header.html?v=35").then(r => r.text()).then(h => headerEl.innerHTML = h);
+  if (footerEl) fetch("/components/footer.html?v=35").then(r => r.text()).then(function (h) {
     footerEl.innerHTML = h;
     observeStaggerItems();
   });
