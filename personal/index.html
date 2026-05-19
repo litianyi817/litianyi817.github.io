@@ -65,6 +65,8 @@
 .schedule-course .sc-name { color: var(--text-primary); font-weight: 500; }
 .schedule-course .sc-meta { color: var(--text-muted); font-size: 0.68rem; }
 .schedule-course .sc-room { color: var(--text-muted); font-size: 0.7rem; text-align: right; }
+.schedule-course.upcoming { border-color: #f59e0b; background: rgba(245,158,11,0.06); }
+.schedule-day-title.today { border-left-color: #f59e0b; }
 .schedule-empty { text-align: center; color: var(--text-muted); padding: 1.5rem; font-size: 0.8rem; }
 
 /* Photos */
@@ -191,33 +193,37 @@ function renderSchedule() {
     .then(function(r){ return r.json(); })
     .then(function(days) {
       var now = new Date();
-      var nowDay = now.getDay(); // 0=Sun,1=Mon...
+      var nowDay = now.getDay();
       var nowMin = now.getHours() * 60 + now.getMinutes();
-      var todayIdx = nowDay === 0 ? 6 : nowDay - 1; // Mon=0,Sun=6
-      var upcoming = null;
+      var todayIdx = nowDay === 0 ? 6 : nowDay - 1;
+
+      // Find upcoming course
+      var upcoming = null, upcomingDay = null;
       days.forEach(function(day, di) {
         day.courses.forEach(function(c) {
           var start = parseTime(c.time);
-          if (di === todayIdx && start > nowMin) {
-            if (!upcoming || start < parseTime(upcoming.time)) upcoming = c;
-          } else if (di === (todayIdx+1)%7 && !upcoming) {
-            if (!upcoming || (di < todayIdx ? (di+7)*1440 : di*1440) + start < (upcoming._di < todayIdx ? (upcoming._di+7)*1440 : upcoming._di*1440) + parseTime(upcoming.time)) { upcoming = c; upcoming._di = di; }
+          var offset = (di - todayIdx) * 1440 + start - nowMin;
+          if (offset > 0 && (upcoming === null || offset < upcoming._off)) {
+            upcoming = c; upcoming._off = offset; upcomingDay = di;
           }
         });
-        if (upcoming && !upcoming._di) upcoming._di = di;
       });
+
       var h = '<div class="schedule-wrap">';
       days.forEach(function(day, di) {
         var isToday = di === todayIdx;
-        h += '<div class="schedule-day"><div class="schedule-day-title'+(isToday?'" style="border-left-color:#f59e0b"':'')+'>'+day.day+(isToday?' <span style="color:#f59e0b;font-size:0.7rem">今天</span>':'')+'</div><div class="schedule-courses">';
+        var titleCls = 'schedule-day-title' + (isToday ? ' today' : '');
+        var titleExtra = isToday ? ' <span style="color:#f59e0b;font-size:0.7rem">今天</span>' : '';
+        h += '<div class="schedule-day"><div class="'+titleCls+'">'+day.day+titleExtra+'</div><div class="schedule-courses">';
         if (day.courses.length === 0) {
           h += '<div class="schedule-empty">今日无课 🌟</div>';
         } else {
           day.courses.forEach(function(c) {
-            var isUpcoming = upcoming && upcoming.time === c.time && upcoming.name === c.name;
+            var isUpcoming = upcoming && di === upcomingDay && c.time === upcoming.time && c.name === upcoming.name;
             var startH = parseInt(c.time.split("-")[0].split(":")[0]);
             var period = getPeriod(startH);
-            h += '<div class="schedule-course'+(isUpcoming?'" style="border-color:#f59e0b;background:rgba(245,158,11,0.06)"':'')+'>';
+            var cls = 'schedule-course' + (isUpcoming ? ' upcoming' : '');
+            h += '<div class="'+cls+'">';
             h += '<div><span class="sc-time">'+period+' '+c.time+'</span></div>';
             h += '<div><span class="sc-name">'+c.name+'</span><br><span class="sc-meta">'+c.code+' · '+c.teacher+' · '+c.weeks+'</span></div>';
             h += '<div class="sc-room">'+c.classroom+(isUpcoming?'<br><span style="color:#f59e0b;font-size:0.65rem">▶ 即将开始</span>':'')+'</div>';
