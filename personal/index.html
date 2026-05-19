@@ -69,6 +69,28 @@
 
 /* Photos */
 .photos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.8rem; }
+.photo-card { cursor: pointer; transition: transform 0.2s; }
+.photo-card:hover { transform: translateY(-2px); }
+.photo-thumb {
+  aspect-ratio: 4/5; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); overflow: hidden;
+}
+.photo-name { font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 0.3rem; }
+.photo-overlay {
+  position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+}
+.photo-modal {
+  background: var(--bg-secondary); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 2rem; text-align: center; max-width: 500px; width: 90%;
+  position: relative;
+}
+.photo-close {
+  position: absolute; top: 0.8rem; right: 1rem;
+  background: none; border: none; color: var(--text-secondary); font-size: 1.5rem;
+  cursor: pointer; line-height: 1;
+}
 .photo-placeholder {
   aspect-ratio: 1; background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius-md); display: flex; align-items: center;
@@ -154,21 +176,51 @@ function renderTab() {
   else if (currentTab === "photos") renderPhotos();
 }
 
+function parseTime(t) {
+  var parts = t.split("-")[0].split(":");
+  return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+}
+function getPeriod(h) {
+  if (h < 12) return "上午";
+  if (h < 14) return "中午";
+  if (h < 18) return "下午";
+  return "晚上";
+}
 function renderSchedule() {
   fetch("/personal/课表.json?v=" + Date.now())
     .then(function(r){ return r.json(); })
     .then(function(days) {
+      var now = new Date();
+      var nowDay = now.getDay(); // 0=Sun,1=Mon...
+      var nowMin = now.getHours() * 60 + now.getMinutes();
+      var todayIdx = nowDay === 0 ? 6 : nowDay - 1; // Mon=0,Sun=6
+      var upcoming = null;
+      days.forEach(function(day, di) {
+        day.courses.forEach(function(c) {
+          var start = parseTime(c.time);
+          if (di === todayIdx && start > nowMin) {
+            if (!upcoming || start < parseTime(upcoming.time)) upcoming = c;
+          } else if (di === (todayIdx+1)%7 && !upcoming) {
+            if (!upcoming || (di < todayIdx ? (di+7)*1440 : di*1440) + start < (upcoming._di < todayIdx ? (upcoming._di+7)*1440 : upcoming._di*1440) + parseTime(upcoming.time)) { upcoming = c; upcoming._di = di; }
+          }
+        });
+        if (upcoming && !upcoming._di) upcoming._di = di;
+      });
       var h = '<div class="schedule-wrap">';
-      days.forEach(function(day) {
-        h += '<div class="schedule-day"><div class="schedule-day-title">'+day.day+'</div><div class="schedule-courses">';
+      days.forEach(function(day, di) {
+        var isToday = di === todayIdx;
+        h += '<div class="schedule-day"><div class="schedule-day-title'+(isToday?'" style="border-left-color:#f59e0b"':'')+'>'+day.day+(isToday?' <span style="color:#f59e0b;font-size:0.7rem">今天</span>':'')+'</div><div class="schedule-courses">';
         if (day.courses.length === 0) {
           h += '<div class="schedule-empty">今日无课 🌟</div>';
         } else {
           day.courses.forEach(function(c) {
-            h += '<div class="schedule-course">';
-            h += '<div><span class="sc-time">'+c.time+'</span></div>';
+            var isUpcoming = upcoming && upcoming.time === c.time && upcoming.name === c.name;
+            var startH = parseInt(c.time.split("-")[0].split(":")[0]);
+            var period = getPeriod(startH);
+            h += '<div class="schedule-course'+(isUpcoming?'" style="border-color:#f59e0b;background:rgba(245,158,11,0.06)"':'')+'>';
+            h += '<div><span class="sc-time">'+period+' '+c.time+'</span></div>';
             h += '<div><span class="sc-name">'+c.name+'</span><br><span class="sc-meta">'+c.code+' · '+c.teacher+' · '+c.weeks+'</span></div>';
-            h += '<div class="sc-room">'+c.classroom+'</div>';
+            h += '<div class="sc-room">'+c.classroom+(isUpcoming?'<br><span style="color:#f59e0b;font-size:0.65rem">▶ 即将开始</span>':'')+'</div>';
             h += '</div>';
           });
         }
@@ -183,12 +235,55 @@ function renderSchedule() {
 }
 
 function renderPhotos() {
+  var photos = [
+    { name:"证件照", file:"/personal/证件照.jpg", date:"2026" }
+  ];
   var h = '<div class="photos-grid">';
-  h += '<div class="photo-placeholder">📷 即将添加</div>';
-  h += '<div class="photo-placeholder">🖼 敬请期待</div>';
-  h += '<div class="photo-placeholder">📸 照片模块</div>';
+  photos.forEach(function(p) {
+    h += '<div class="photo-card" onclick="previewPhoto(\''+p.file+'\',\''+p.name+'\')">';
+    h += '<div class="photo-thumb"><img src="'+p.file+'" alt="'+p.name+'" loading="lazy" style="width:100%;height:100%;object-fit:cover"></div>';
+    h += '<div class="photo-name">'+p.name+'</div></div>';
+  });
   h += '</div>';
   document.getElementById("tabContent").innerHTML = h;
+}
+
+function previewPhoto(src, name) {
+  var overlay = document.createElement("div");
+  overlay.className = "photo-overlay";
+  overlay.innerHTML = '<div class="photo-modal">'+
+    '<button class="photo-close" onclick="this.parentElement.parentElement.remove()">&times;</button>'+
+    '<img src="'+src+'" alt="'+name+'" style="max-width:100%;max-height:50vh;border-radius:8px;margin-bottom:1rem">'+
+    '<p style="color:var(--text-primary);font-weight:600;margin-bottom:0.8rem">'+name+'</p>'+
+    '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center">'+
+    '<a href="'+src+'" download class="game-btn small" style="text-decoration:none">📥 原图</a>'+
+    '<button class="game-btn small" onclick="resizeAndDownload(\''+src+'\',25,35,\'1寸\')">📐 1寸 (25×35mm)</button>'+
+    '<button class="game-btn small" onclick="resizeAndDownload(\''+src+'\',35,49,\'2寸\')">📐 2寸 (35×49mm)</button>'+
+    '</div></div>';
+  overlay.addEventListener("click", function(e){ if(e.target===overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+
+function resizeAndDownload(src, wMm, hMm, label) {
+  var img = new Image(); img.crossOrigin = "anonymous";
+  img.onload = function() {
+    var dpr = window.devicePixelRatio || 1;
+    var wPx = Math.round(wMm * dpr * 11.8);
+    var hPx = Math.round(hMm * dpr * 11.8);
+    var c = document.createElement("canvas");
+    c.width = wPx; c.height = hPx;
+    var ctx = c.getContext("2d");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, wPx, hPx);
+    var s = Math.min(wPx / img.width, hPx / img.height);
+    var iw = img.width * s, ih = img.height * s;
+    ctx.drawImage(img, (wPx-iw)/2, (hPx-ih)/2, iw, ih);
+    var a = document.createElement("a");
+    a.download = "证件照_"+label+".png";
+    a.href = c.toDataURL("image/png");
+    a.click();
+  };
+  img.src = src;
 }
 
 // Init
