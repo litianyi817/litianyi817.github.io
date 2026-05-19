@@ -1,0 +1,134 @@
+[
+  {
+    "day": "星期一 (05月18日)",
+    "courses": [
+      {
+        "period": [3, 4, 5],
+        "time": "09:50-12:15",
+        "code": "B1113",
+        "name": "英语Ⅱ",
+        "teacher": "夏玉立",
+        "weeks": "1-17周",
+        "classroom": "X30382"
+      },
+      {
+        "period": [6, 7, 8],
+        "time": "14:00-16:25",
+        "code": "B1141",
+        "name": "大学物理与实验I",
+        "teacher": "张文婷",
+        "weeks": "1-17周",
+        "classroom": "X2524"
+      },
+      {
+        "period": [9, 10],
+        "time": "16:40-18:15",
+        "code": "B1237",
+        "name": "物理化学",
+        "teacher": "雷鸣, 张雪梅",
+        "weeks": "1-17周",
+        "classroom": "X2420"
+      }
+    ]
+  },
+  {
+    "day": "星期二 (05月19日)",
+    "courses": [
+      {
+        "period": [1, 2],
+        "time": "08:00-09:35",
+        "code": "B1126",
+        "name": "高等数学Ⅱ",
+        "teacher": "冯颖",
+        "weeks": "1-17周",
+        "classroom": "X2524"
+      },
+      {
+        "period": [6, 7, 8],
+        "time": "14:00-16:25",
+        "code": "B1141",
+        "name": "大学物理与实验I",
+        "teacher": "张文婷",
+        "weeks": "1-17周",
+        "classroom": "X2531"
+      }
+    ]
+  },
+  {
+    "day": "星期三 (05月20日)",
+    "courses": [
+      {
+        "period": [1, 2],
+        "time": "08:00-09:35",
+        "code": "B1098",
+        "name": "跨学科创新方法与实践I",
+        "teacher": "朱石磊",
+        "weeks": "1-17周",
+        "classroom": "X9202"
+      },
+      {
+        "period": [3, 4, 5],
+        "time": "09:50-12:15",
+        "code": "B1383",
+        "name": "中国近现代史纲要",
+        "teacher": "谢兴志",
+        "weeks": "1-17周",
+        "classroom": "X2417"
+      }
+    ]
+  },
+  {
+    "day": "星期四 (05月21日)",
+    "courses": [
+      {
+        "period": [3, 4, 5],
+        "time": "09:50-12:15",
+        "code": "B1126",
+        "name": "高等数学Ⅱ",
+        "teacher": "冯颖",
+        "weeks": "1-17周",
+        "classroom": "X2524"
+      },
+      {
+        "period": [11, 12],
+        "time": "19:30-21:05",
+        "code": "B0378",
+        "name": "大学生心理健康",
+        "teacher": "唐静",
+        "weeks": "1-17周",
+        "classroom": "X2519"
+      }
+    ]
+  },
+  {
+    "day": "星期五 (05月22日)",
+    "courses": [
+      {
+        "period": [3, 4],
+        "time": "09:50-11:25",
+        "code": "B1237",
+        "name": "物理化学",
+        "teacher": "雷鸣, 张雪梅",
+        "weeks": "1-17周",
+        "classroom": "X2420"
+      },
+      {
+        "period": [8, 9],
+        "time": "15:40-17:25",
+        "code": "B2459",
+        "name": "体育Ⅱ",
+        "teacher": "易述鲜",
+        "weeks": "1-17周",
+        "classroom": "北区田径场"
+      }
+    ]
+  },
+  {
+    "day": "星期六 (05月23日)",
+    "courses": []
+  },
+  {
+    "day": "星期日 (05月24日)",
+    "courses": []
+  }
+]

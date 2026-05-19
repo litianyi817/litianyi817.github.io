@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal - Litianyi</title>
+<link rel="preload" href="/assets/bg.png" as="image">
+<link rel="stylesheet" href="/style.css?v=37">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>L</text></svg>">
+<style>
+/* Password gate */
+.gate-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex; align-items: center; justify-content: center;
+}
+.gate-box {
+  background: var(--bg-secondary); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 2.5rem; text-align: center;
+  max-width: 360px; width: 90%;
+}
+.gate-box h2 { margin-bottom: 0.3rem; }
+.gate-box p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.2rem; }
+.gate-box input {
+  width: 100%; padding: 0.6rem 1rem; font-size: 1rem; font-family: var(--font-mono);
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text-primary); text-align: center; letter-spacing: 0.1em;
+  outline: none; transition: border-color 0.2s;
+}
+.gate-box input:focus { border-color: var(--accent); }
+.gate-box .gate-err { font-size: 0.72rem; color: #ef4444; margin-top: 0.5rem; min-height: 1.2em; }
+.gate-box button {
+  margin-top: 0.8rem; padding: 0.5rem 2.5rem; font-size: 0.85rem; font-family: var(--font-sans);
+  background: var(--accent); border: none; border-radius: 8px; color: #fff; cursor: pointer;
+}
+
+/* Tabs */
+.personal-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.personal-tab {
+  padding: 0.4rem 1.2rem; font-size: 0.8rem; font-family: var(--font-sans);
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+}
+.personal-tab.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.personal-tab:hover { color: var(--text-primary); }
+
+/* Schedule */
+.schedule-wrap { max-width: 700px; margin: 0 auto; }
+.schedule-day { margin-bottom: 1.2rem; }
+.schedule-day-title {
+  font-size: 0.85rem; font-weight: 600; color: var(--text-primary);
+  padding: 0.4rem 0.8rem; background: var(--bg-card); border-radius: 6px;
+  margin-bottom: 0.5rem; border-left: 3px solid var(--accent);
+}
+.schedule-courses { display: grid; gap: 0.4rem; }
+.schedule-course {
+  display: grid; grid-template-columns: 120px 1fr 100px;
+  gap: 0.5rem; align-items: center;
+  padding: 0.5rem 0.8rem; background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border); border-radius: 6px;
+  font-size: 0.78rem;
+}
+.schedule-course .sc-time { color: var(--accent); font-family: var(--font-mono); font-size: 0.7rem; }
+.schedule-course .sc-name { color: var(--text-primary); font-weight: 500; }
+.schedule-course .sc-meta { color: var(--text-muted); font-size: 0.68rem; }
+.schedule-course .sc-room { color: var(--text-muted); font-size: 0.7rem; text-align: right; }
+.schedule-empty { text-align: center; color: var(--text-muted); padding: 1.5rem; font-size: 0.8rem; }
+
+/* Photos */
+.photos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.8rem; }
+.photo-placeholder {
+  aspect-ratio: 1; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); display: flex; align-items: center;
+  justify-content: center; color: var(--text-muted); font-size: 0.75rem;
+  cursor: pointer; transition: all 0.2s;
+}
+.photo-placeholder:hover { border-color: var(--border-hover); color: var(--text-secondary); }
+
+@media (max-width: 600px) {
+  .schedule-course { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Password Gate -->
+<div class="gate-overlay" id="gateOverlay">
+  <div class="gate-box">
+    <h2>🔒 Personal</h2>
+    <p>请输入密码以继续</p>
+    <input type="password" id="gateInput" placeholder="········" maxlength="20" autofocus>
+    <div class="gate-err" id="gateErr"></div>
+    <button onclick="checkPassword()">验证</button>
+  </div>
+</div>
+
+<div id="header"></div>
+<main>
+<div class="glass-panel" style="max-width:900px">
+  <div class="glass-panel-header">
+    <a href="/" class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>返回首页</a>
+    <h1>Personal</h1>
+  </div>
+  <div class="glass-panel-body">
+    <div class="personal-tabs">
+      <button class="personal-tab active" data-tab="schedule">📅 课表</button>
+      <button class="personal-tab" data-tab="photos">📷 照片</button>
+    </div>
+    <div id="tabContent"></div>
+  </div>
+</div>
+</main>
+<div id="footer"></div>
+<script src="/script.js?v=37"></script>
+<script>
+// SHA-256 hash of password "070817"
+var PASS_HASH = "9d6659d19f89f2acc94540667a00069dc61529d4e3b42baaaeac8b61548a293f";
+var unlocked = false;
+
+async function checkPassword() {
+  var input = document.getElementById("gateInput").value;
+  var errEl = document.getElementById("gateErr");
+  if (!input) { errEl.textContent = "请输入密码"; return; }
+  var data = new TextEncoder().encode(input);
+  var hashBuf = await crypto.subtle.digest("SHA-256", data);
+  var hashHex = Array.from(new Uint8Array(hashBuf)).map(function(b){ return b.toString(16).padStart(2,"0"); }).join("");
+  if (hashHex === PASS_HASH) {
+    unlocked = true;
+    document.getElementById("gateOverlay").remove();
+  } else {
+    errEl.textContent = "密码错误";
+    document.getElementById("gateInput").value = "";
+  }
+}
+
+// Enter key to submit
+document.getElementById("gateInput").addEventListener("keydown", function(e) { if(e.key==="Enter") checkPassword(); });
+
+// Tab switching
+var currentTab = "schedule";
+document.querySelectorAll(".personal-tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".personal-tab").forEach(function(t){ t.classList.remove("active"); });
+    this.classList.add("active");
+    currentTab = this.dataset.tab;
+    renderTab();
+  });
+});
+
+function renderTab() {
+  if (!unlocked) return;
+  if (currentTab === "schedule") renderSchedule();
+  else if (currentTab === "photos") renderPhotos();
+}
+
+function renderSchedule() {
+  fetch("/personal/课表.json?v=" + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(days) {
+      var h = '<div class="schedule-wrap">';
+      days.forEach(function(day) {
+        h += '<div class="schedule-day"><div class="schedule-day-title">'+day.day+'</div><div class="schedule-courses">';
+        if (day.courses.length === 0) {
+          h += '<div class="schedule-empty">今日无课 🌟</div>';
+        } else {
+          day.courses.forEach(function(c) {
+            h += '<div class="schedule-course">';
+            h += '<div><span class="sc-time">'+c.time+'</span></div>';
+            h += '<div><span class="sc-name">'+c.name+'</span><br><span class="sc-meta">'+c.code+' · '+c.teacher+' · '+c.weeks+'</span></div>';
+            h += '<div class="sc-room">'+c.classroom+'</div>';
+            h += '</div>';
+          });
+        }
+        h += '</div></div>';
+      });
+      h += '</div>';
+      document.getElementById("tabContent").innerHTML = h;
+    })
+    .catch(function() {
+      document.getElementById("tabContent").innerHTML = '<div class="schedule-empty">课表加载失败</div>';
+    });
+}
+
+function renderPhotos() {
+  var h = '<div class="photos-grid">';
+  h += '<div class="photo-placeholder">📷 即将添加</div>';
+  h += '<div class="photo-placeholder">🖼 敬请期待</div>';
+  h += '<div class="photo-placeholder">📸 照片模块</div>';
+  h += '</div>';
+  document.getElementById("tabContent").innerHTML = h;
+}
+
+// Init
+renderSchedule();
+</script>
+</body>
+</html>
