@@ -101,6 +101,15 @@
 }
 .photo-placeholder:hover { border-color: var(--border-hover); color: var(--text-secondary); }
 
+.report-preview {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  cursor: pointer; transition: all 0.2s;
+}
+.report-preview:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+.report-icon { font-size: 2.5rem; }
+.report-name { font-size: 0.78rem; color: var(--text-secondary); word-break: break-all; }
+
 @media (max-width: 600px) {
   .schedule-course { grid-template-columns: 1fr; }
 }
@@ -130,6 +139,7 @@
     <div class="personal-tabs">
       <button class="personal-tab active" data-tab="schedule">📅 课表</button>
       <button class="personal-tab" data-tab="photos">📷 照片</button>
+      <button class="personal-tab" data-tab="report">📋 报告</button>
     </div>
     <div id="tabContent"></div>
   </div>
@@ -176,6 +186,7 @@ function renderTab() {
   if (!unlocked) return;
   if (currentTab === "schedule") renderSchedule();
   else if (currentTab === "photos") renderPhotos();
+  else if (currentTab === "report") renderReport();
 }
 
 function parseTime(t) {
@@ -290,6 +301,29 @@ function resizeAndDownload(src, wMm, hMm, label) {
     a.click();
   };
   img.src = src;
+}
+
+// Report
+var REPORT_EXPIRY = new Date("2026-08-25");
+
+function renderReport() {
+  var now = new Date();
+  var expired = now > REPORT_EXPIRY;
+  var daysLeft = Math.ceil((REPORT_EXPIRY - now) / (1000*60*60*24));
+  var h = '<div style="max-width:500px;margin:0 auto;text-align:center">';
+  h += '<div style="font-size:1rem;color:var(--text-primary);font-weight:600;margin-bottom:0.5rem">📋 学籍在线验证报告</div>';
+  h += '<div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1.2rem">教育部学籍在线验证报告 · 李天一</div>';
+  h += '<div class="report-preview"><div class="report-icon">📄</div><div class="report-name">教育部学籍在线验证报告_李天一.pdf</div></div>';
+  if (expired) {
+    h += '<div style="margin-top:1rem;padding:0.6rem 1rem;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;color:#ef4444;font-size:0.78rem">⚠ 报告已于 '+REPORT_EXPIRY.toLocaleDateString("zh-CN")+' 过期，请更新</div>';
+  } else {
+    h += '<div style="margin-top:1rem;padding:0.6rem 1rem;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:8px;color:#4ade80;font-size:0.78rem">✅ 报告有效 · 剩余 '+daysLeft+' 天（至 '+REPORT_EXPIRY.toLocaleDateString("zh-CN")+'）</div>';
+  }
+  h += '<div style="margin-top:1rem;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap">';
+  h += '<a href="/personal/教育部学籍在线验证报告_李天一.pdf" target="_blank" class="game-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem">👁 在线查看</a>';
+  h += '<a href="/personal/教育部学籍在线验证报告_李天一.pdf" download class="game-btn primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem">📥 下载 PDF</a>';
+  h += '</div></div>';
+  document.getElementById("tabContent").innerHTML = h;
 }
 
 // Init
