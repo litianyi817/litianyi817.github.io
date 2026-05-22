@@ -3,8 +3,8 @@
   const headerEl = document.getElementById("header");
   const footerEl = document.getElementById("footer");
 
-  if (headerEl) fetch("/components/header.html?v=40").then(r => r.text()).then(h => headerEl.innerHTML = h);
-  if (footerEl) fetch("/components/footer.html?v=40").then(r => r.text()).then(function (h) {
+  if (headerEl) fetch("/components/header.html?v=41").then(r => r.text()).then(h => headerEl.innerHTML = h);
+  if (footerEl) fetch("/components/footer.html?v=41").then(r => r.text()).then(function (h) {
     footerEl.innerHTML = h;
     observeStaggerItems();
   });
@@ -21,14 +21,22 @@
   obs.observe(document.body, { childList: true, subtree: true });
 
   function initNav() {
-    let ticking = false;
-    window.addEventListener("scroll", () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          navEl.classList.toggle("scrolled", window.scrollY > 20);
-          ticking = false;
+    var lastScrollY = 0, tickingNav = false;
+    window.addEventListener("scroll", function () {
+      if (!tickingNav) {
+        requestAnimationFrame(function () {
+          var currentY = window.scrollY;
+          if (currentY > 80) {
+            navEl.classList.toggle("scrolled", currentY > 20);
+            navEl.classList.toggle("nav-hidden", currentY > lastScrollY && currentY > 120);
+          } else {
+            navEl.classList.remove("nav-hidden");
+            navEl.classList.remove("scrolled");
+          }
+          lastScrollY = currentY;
+          tickingNav = false;
         });
-        ticking = true;
+        tickingNav = true;
       }
     });
 
@@ -309,21 +317,35 @@
           if (!groups[y]) groups[y] = [];
           groups[y].push(p);
         });
-        var idx = 0;
-        blogListEl.innerHTML = Object.entries(groups)
-          .sort(function (a, b) { return b[0] - a[0]; })
-          .map(function (entry) {
-            var year = entry[0], items = entry[1];
-            return '<div class="blog-year stagger-item" data-delay="' + (idx++ * 60) + '">' + year + '</div>' +
-              items.map(function (p) {
-                return '<a class="blog-item stagger-item" data-delay="' + (idx++ * 60) + '" href="/blog/posts/' + p.slug + '.html">' +
-                  '<time>' + p.date + (p.time ? " " + p.time : "") + '</time>' +
-                  '<div class="blog-item-title">' + p.title + '</div>' +
-                  '<div class="blog-item-excerpt">' + p.summary + '</div>' +
-                '</a>';
-              }).join("");
-          })
-          .join("");
+        var flat = [];
+        Object.entries(groups).sort(function (a, b) { return b[0] - a[0]; }).forEach(function (entry) {
+          entry[1].forEach(function (p) { flat.push(p); });
+        });
+        var recent = flat.length > 0 ? flat[0] : null;
+        var rest = flat.slice(1);
+        var h = '';
+        if (recent) {
+          h += '<div class="blog-featured stagger-item" data-delay="0">' +
+            '<a class="blog-featured-card" href="/blog/posts/' + recent.slug + '.html">' +
+            '<div class="blog-featured-date">' + recent.date + (recent.time ? " " + recent.time : "") + '</div>' +
+            '<h2>' + recent.title + '</h2>' +
+            '<p>' + recent.summary + '</p>' +
+            '<span class="blog-featured-cta">阅读全文 →</span>' +
+            '</a></div>';
+        }
+        if (rest.length > 0) {
+          h += '<div class="blog-grid" style="max-width:var(--content-width);margin:0 auto">';
+          rest.forEach(function (p, i) {
+            h += '<a class="blog-card stagger-item" data-delay="' + (i * 100) + '" href="/blog/posts/' + p.slug + '.html">' +
+              '<div class="blog-card-date">' + p.date + (p.time ? " " + p.time : "") + '</div>' +
+              '<h3>' + p.title + '</h3>' +
+              '<p>' + p.summary + '</p>' +
+            '</a>';
+          });
+          h += '</div>';
+          bindCardHover();
+        }
+        blogListEl.innerHTML = h || '<p class="empty-state">还没有文章，敬请期待。</p>';
         observeStaggerItems();
       })
       .catch(() => {
