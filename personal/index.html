@@ -110,22 +110,28 @@
 .report-icon { font-size: 2.5rem; }
 .report-name { font-size: 0.78rem; color: var(--text-secondary); word-break: break-all; }
 
-/* Food */
-.food-list { display: flex; flex-direction: column; gap: 0.35rem; }
-.food-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0.45rem 0.7rem; background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 8px; font-size: 0.78rem;
+/* Food Cards */
+.food-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.food-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden; transition: all 0.15s ease;
 }
-.food-name { color: var(--text-primary); font-weight: 500; }
-.food-loc { color: var(--text-muted); font-size: 0.68rem; margin-left: 0.5rem; }
-.food-rating { font-size: 0.75rem; margin-left: 0.4rem; font-weight: 600; }
-.food-note { font-size: 0.65rem; color: var(--text-muted); margin-left: 0.5rem; }
-.food-splus { color: #f59e0b; }
-.food-s { color: #ef4444; }
-.food-a { color: #c084fc; }
-.food-b { color: var(--text-secondary); }
-.food-c { color: var(--text-muted); }
+.food-card:hover { border-color: var(--border-hover); }
+.food-card-body { padding: 0.7rem 0.9rem; }
+.food-card-name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.3rem; }
+.food-card-info { font-size: 0.7rem; color: var(--text-muted); line-height: 1.5; }
+.food-card-info .workday { color: #f59e0b; font-weight: 500; }
+.food-card-badge {
+  display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.03em;
+}
+.food-splus .food-card-badge { background: rgba(245,158,11,0.15); color: #f59e0b; }
+.food-s .food-card-badge { background: rgba(239,68,68,0.15); color: #ef4444; }
+.food-a .food-card-badge { background: rgba(192,132,252,0.15); color: #c084fc; }
+.food-b .food-card-badge { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
+.food-c .food-card-badge { background: rgba(255,255,255,0.04); color: var(--text-muted); }
+.food-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.2rem; }
+.food-card-price { font-size: 0.68rem; color: #4ade80; font-weight: 500; }
 
 @media (max-width: 600px) {
   .schedule-course { grid-template-columns: 1fr; }
@@ -384,7 +390,11 @@ function renderFoodPlan() {
   } else {
     h += '<div class="food-list">';
     foodPlanned.forEach(function(item) {
-      h += '<div class="food-item"><span class="food-name">'+item.name+'</span><span class="food-loc">'+item.loc+'</span></div>';
+      var info = item.loc.replace(/工作日/g, '<span class="workday">工作日</span>');
+      h += '<div class="food-card"><div class="food-card-body">';
+      h += '<div class="food-card-header"><span class="food-card-name">'+item.name+'</span></div>';
+      h += '<div class="food-card-info">'+info+'</div>';
+      h += '</div></div>';
     });
     h += '</div>';
   }
@@ -399,9 +409,10 @@ function renderFoodReview() {
     h += '<div class="food-list">';
     foodReviews.forEach(function(item) {
       var cls = RATING_CLASS[item.rating] || "";
-      h += '<div class="food-item"><span class="food-name">'+item.name+'</span><span class="food-rating '+cls+'">'+item.rating+' · '+RATINGS[item.rating]+'</span>';
-      if (item.note) h += '<span class="food-note">'+item.note+'</span>';
-      h += '</div>';
+      h += '<div class="food-card '+cls+'"><div class="food-card-body">';
+      h += '<div class="food-card-header"><span class="food-card-name">'+item.name+'</span><span class="food-card-badge">'+item.rating+' · '+RATINGS[item.rating]+'</span></div>';
+      if (item.note) h += '<div class="food-card-info">'+item.note+'</div>';
+      h += '</div></div>';
     });
     h += '</div>';
   }
