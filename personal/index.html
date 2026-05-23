@@ -347,14 +347,20 @@ function renderReport() {
 
 // Food (read-only)
 var foodSubTab = "plan";
-var RATINGS = { "S+":"夯爆了", "S":"夯", "A":"人上人", "B":"NPC", "C":"路边一条" };
+var RATINGS = { "S+":"夯爆了", "S":"夯", "A":"人上人", "B":"NPC", "C":"拉完了" };
 var RATING_CLASS = { "S+":"food-splus", "S":"food-s", "A":"food-a", "B":"food-b", "C":"food-c" };
 
 var foodPlanned = [
-  { name:"待探索的美食", loc:"敬请期待" }
+  { name:"知喜多日式料理", loc:"工作日 54代100 CNY" },
+  { name:"滨寿司", loc:"工作日 85代100 CNY / 满50减10（任意时间）" },
+  { name:"金倒拐耗儿鱼", loc:"单人套餐 69 CNY" },
+  { name:"X秀吉日式料理", loc:"单人餐 42 CNY" },
+  { name:"粤拭轩", loc:"单人套餐 24 CNY" }
 ];
 var foodReviews = [
-  { name:"示例餐厅", rating:"S", note:"值得专程前往" }
+  { name:"豪客来牛排", rating:"B", note:"性价比低，味道无亮点，吃不饱" },
+  { name:"滨寿司", rating:"S", note:"性价比在日料中较高，分量不错，不同价位都有不错的体验" },
+  { name:"寿司郎", rating:"A", note:"味道不错，主食分量偏少，价格较贵" }
 ];
 
 function renderFood() {
