@@ -114,24 +114,34 @@
 .food-list { display: flex; flex-direction: column; gap: 0.6rem; }
 .food-card {
   background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 10px; overflow: hidden; transition: all 0.15s ease;
+  border-radius: 10px; overflow: hidden; transition: all 0.2s ease;
+  border-left: 3px solid var(--border);
 }
-.food-card:hover { border-color: var(--border-hover); }
-.food-card-body { padding: 0.7rem 0.9rem; }
-.food-card-name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.3rem; }
-.food-card-info { font-size: 0.7rem; color: var(--text-muted); line-height: 1.5; }
-.food-card-info .workday { color: #f59e0b; font-weight: 500; }
+.food-card:hover { border-color: var(--border-hover); border-left-color: var(--accent); }
+.food-card-body { padding: 0.75rem 0.9rem; }
+.food-card-name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.35rem; }
+.food-card-meta {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: flex-start;
+  font-size: 0.7rem; color: var(--text-muted); line-height: 1.6;
+}
+.food-card-tag {
+  display: inline-block; padding: 0.12rem 0.5rem; border-radius: 3px;
+  font-size: 0.65rem; font-weight: 500; background: rgba(74,222,128,0.1); color: #4ade80;
+  white-space: nowrap;
+}
+.food-card-tag.workday { background: rgba(245,158,11,0.1); color: #f59e0b; }
+.food-card-info { font-size: 0.7rem; color: var(--text-muted); line-height: 1.5; margin-top: 0.3rem; padding-top: 0.3rem; border-top: 1px solid var(--border); }
 .food-card-badge {
-  display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px;
+  display: inline-block; padding: 0.18rem 0.55rem; border-radius: 4px;
   font-size: 0.7rem; font-weight: 700; letter-spacing: 0.03em;
+  flex-shrink: 0;
 }
 .food-splus .food-card-badge { background: rgba(245,158,11,0.15); color: #f59e0b; }
 .food-s .food-card-badge { background: rgba(239,68,68,0.15); color: #ef4444; }
 .food-a .food-card-badge { background: rgba(192,132,252,0.15); color: #c084fc; }
 .food-b .food-card-badge { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
 .food-c .food-card-badge { background: rgba(255,255,255,0.04); color: var(--text-muted); }
-.food-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.2rem; }
-.food-card-price { font-size: 0.68rem; color: #4ade80; font-weight: 500; }
+.food-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.3rem; }
 
 @media (max-width: 600px) {
   .schedule-course { grid-template-columns: 1fr; }
@@ -358,9 +368,9 @@ var RATING_CLASS = { "S+":"food-splus", "S":"food-s", "A":"food-a", "B":"food-b"
 
 var foodPlanned = [
   { name:"知喜多日式料理", loc:"工作日 54代100 CNY" },
-  { name:"滨寿司", loc:"工作日 85代100 CNY / 满50减10（任意时间）" },
+  { name:"滨寿司", loc:"工作日 85代100 CNY<br>满50减10（任意时间）" },
   { name:"金倒拐耗儿鱼", loc:"单人套餐 69 CNY" },
-  { name:"X秀吉日式料理", loc:"单人餐 42 CNY" },
+  { name:"X秀吉日式料理", loc:"单人套餐 42 CNY" },
   { name:"粤拭轩", loc:"单人套餐 24 CNY" }
 ];
 var foodReviews = [
@@ -390,9 +400,15 @@ function renderFoodPlan() {
   } else {
     h += '<div class="food-list">';
     foodPlanned.forEach(function(item) {
-      var info = item.loc.replace(/工作日/g, '<span class="workday">工作日</span>');
+      var info = item.loc;
+      var tags = [];
+      if (info.indexOf("工作日") > -1) tags.push('<span class="food-card-tag workday">工作日</span>');
+      if (info.indexOf("代") > -1) tags.push('<span class="food-card-tag">代金券</span>');
+      if (info.indexOf("单人套餐") > -1) tags.push('<span class="food-card-tag">单人套餐</span>');
+      if (info.indexOf("满") > -1 && info.indexOf("减") > -1) tags.push('<span class="food-card-tag">满减</span>');
       h += '<div class="food-card"><div class="food-card-body">';
-      h += '<div class="food-card-header"><span class="food-card-name">'+item.name+'</span></div>';
+      h += '<div class="food-card-header"><span class="food-card-name">'+item.name+'</span><span style="font-size:0.68rem;color:#4ade80;font-weight:500">'+ (info.match(/[\d]+.*?CNY/)||[""])[0] +'</span></div>';
+      if (tags.length) h += '<div class="food-card-meta">'+tags.join('')+'</div>';
       h += '<div class="food-card-info">'+info+'</div>';
       h += '</div></div>';
     });
