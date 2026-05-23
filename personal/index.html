@@ -110,6 +110,17 @@
 .report-icon { font-size: 2.5rem; }
 .report-name { font-size: 0.78rem; color: var(--text-secondary); word-break: break-all; }
 
+/* Food */
+.food-list { display: flex; flex-direction: column; gap: 0.35rem; }
+.food-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.45rem 0.7rem; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; font-size: 0.78rem;
+}
+.food-name { color: var(--text-primary); font-weight: 500; }
+.food-loc { color: var(--text-muted); font-size: 0.68rem; margin-left: 0.5rem; }
+.food-rating { font-size: 0.8rem; margin-left: 0.3rem; }
+
 @media (max-width: 600px) {
   .schedule-course { grid-template-columns: 1fr; }
 }
@@ -140,6 +151,7 @@
       <button class="personal-tab active" data-tab="schedule">📅 课表</button>
       <button class="personal-tab" data-tab="photos">📷 照片</button>
       <button class="personal-tab" data-tab="report">📋 报告</button>
+      <button class="personal-tab" data-tab="food">🍽 FOOD</button>
     </div>
     <div id="tabContent"></div>
   </div>
@@ -187,6 +199,7 @@ function renderTab() {
   if (currentTab === "schedule") renderSchedule();
   else if (currentTab === "photos") renderPhotos();
   else if (currentTab === "report") renderReport();
+  else if (currentTab === "food") renderFood();
 }
 
 function parseTime(t) {
@@ -325,6 +338,83 @@ function renderReport() {
   h += '</div></div>';
   document.getElementById("tabContent").innerHTML = h;
 }
+
+// Food
+var foodSubTab = "plan";
+var foodPlanned = [];
+var foodReviews = [];
+try { foodPlanned = JSON.parse(localStorage.getItem("food_planned") || "[]"); } catch(e) {}
+try { foodReviews = JSON.parse(localStorage.getItem("food_reviews") || "[]"); } catch(e) {}
+
+function renderFood() {
+  var h = '<div style="max-width:600px;margin:0 auto">';
+  h += '<div class="personal-tabs" style="margin-bottom:1rem">';
+  h += '<button class="personal-tab '+(foodSubTab==="plan"?"active":"")+'" onclick="switchFoodTab(\'plan\')">📝 计划中</button>';
+  h += '<button class="personal-tab '+(foodSubTab==="review"?"active":"")+'" onclick="switchFoodTab(\'review\')">⭐ 用餐评价</button>';
+  h += '</div>';
+  if (foodSubTab === "plan") h += renderFoodPlan();
+  else h += renderFoodReview();
+  h += '</div>';
+  document.getElementById("tabContent").innerHTML = h;
+}
+
+function switchFoodTab(t) { foodSubTab = t; renderFood(); }
+
+function renderFoodPlan() {
+  var h = '<div style="margin-bottom:0.8rem;display:flex;gap:0.4rem">';
+  h += '<input id="foodPlanName" placeholder="餐厅/菜品名称" style="flex:1;padding:0.35rem 0.6rem;font-size:0.75rem;font-family:var(--font-sans);background:var(--bg-card);border:1px solid var(--border);border-radius:6px;color:var(--text-primary)">';
+  h += '<input id="foodPlanLoc" placeholder="位置" style="width:100px;padding:0.35rem 0.6rem;font-size:0.75rem;font-family:var(--font-sans);background:var(--bg-card);border:1px solid var(--border);border-radius:6px;color:var(--text-primary)">';
+  h += '<button class="game-btn" style="width:auto;margin:0;white-space:nowrap" onclick="addFoodPlan()">+ 添加</button></div>';
+  if (foodPlanned.length === 0) {
+    h += '<div class="schedule-empty">还没有计划，添加想去的地方吧 🍜</div>';
+  } else {
+    h += '<div class="food-list">';
+    foodPlanned.forEach(function(item, i) {
+      h += '<div class="food-item"><div><span class="food-name">'+item.name+'</span><span class="food-loc">'+item.loc+'</span></div>';
+      h += '<button class="game-btn small danger" style="margin:0" onclick="removeFoodPlan('+i+')">✕</button></div>';
+    });
+    h += '</div>';
+  }
+  return h;
+}
+
+function renderFoodReview() {
+  var h = '<div style="margin-bottom:0.8rem;display:flex;gap:0.4rem;flex-wrap:wrap">';
+  h += '<input id="foodRevName" placeholder="餐厅/菜品" style="flex:1;min-width:120px;padding:0.35rem 0.6rem;font-size:0.75rem;font-family:var(--font-sans);background:var(--bg-card);border:1px solid var(--border);border-radius:6px;color:var(--text-primary)">';
+  h += '<select id="foodRevRating" style="padding:0.35rem 0.6rem;font-size:0.75rem;font-family:var(--font-sans);background:var(--bg-card);border:1px solid var(--border);border-radius:6px;color:var(--text-primary)"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select>';
+  h += '<button class="game-btn" style="width:auto;margin:0;white-space:nowrap" onclick="addFoodReview()">+ 评价</button></div>';
+  if (foodReviews.length === 0) {
+    h += '<div class="schedule-empty">还没有评价，去吃过就来打分吧 🍽</div>';
+  } else {
+    h += '<div class="food-list">';
+    foodReviews.forEach(function(item, i) {
+      var stars = ""; for (var s=0;s<item.rating;s++) stars += "⭐";
+      h += '<div class="food-item"><div><span class="food-name">'+item.name+'</span><span class="food-rating">'+stars+'</span></div>';
+      h += '<button class="game-btn small danger" style="margin:0" onclick="removeFoodReview('+i+')">✕</button></div>';
+    });
+    h += '</div>';
+  }
+  return h;
+}
+
+function addFoodPlan() {
+  var name = document.getElementById("foodPlanName").value.trim();
+  var loc = document.getElementById("foodPlanLoc").value.trim();
+  if (!name) return;
+  foodPlanned.push({ name:name, loc:loc });
+  try { localStorage.setItem("food_planned", JSON.stringify(foodPlanned)); } catch(e) {}
+  renderFood();
+}
+function removeFoodPlan(i) { foodPlanned.splice(i,1); try { localStorage.setItem("food_planned", JSON.stringify(foodPlanned)); } catch(e) {} renderFood(); }
+function addFoodReview() {
+  var name = document.getElementById("foodRevName").value.trim();
+  var rating = parseInt(document.getElementById("foodRevRating").value);
+  if (!name) return;
+  foodReviews.push({ name:name, rating:rating });
+  try { localStorage.setItem("food_reviews", JSON.stringify(foodReviews)); } catch(e) {}
+  renderFood();
+}
+function removeFoodReview(i) { foodReviews.splice(i,1); try { localStorage.setItem("food_reviews", JSON.stringify(foodReviews)); } catch(e) {} renderFood(); }
 
 // Init
 renderSchedule();
