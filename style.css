@@ -855,6 +855,7 @@ img { max-width: 100%; display: block; }
   font-size: 0.8125rem;
   color: var(--text-muted);
   font-family: var(--font-mono);
+  vertical-align: middle;
 }
 .blog-item-title {
   font-size: 1.0625rem;
@@ -891,6 +892,7 @@ img { max-width: 100%; display: block; }
   font-size: 0.8125rem;
   color: var(--text-muted);
   font-family: var(--font-mono);
+  vertical-align: middle;
 }
 .post-header h1 {
   font-size: clamp(1.75rem, 3.5vw, 2.5rem);
@@ -1045,6 +1047,7 @@ img { max-width: 100%; display: block; }
   font-size: 0.8125rem;
   color: var(--text-muted);
   font-family: var(--font-mono);
+  vertical-align: middle;
 }
 .note-item-tag {
   display: inline-block;
@@ -1170,9 +1173,9 @@ img { max-width: 100%; display: block; }
   border: 1px solid rgba(245,158,11,0.25);
   border-radius: var(--radius-md);
 }
-.travel-dest-flag { font-size: 2rem; line-height: 1; }
-.travel-dest-name { font-size: 1.25rem; font-weight: 600; color: #f59e0b; }
-.travel-dest-sub { font-size: 0.8rem; color: var(--text-muted); }
+.travel-dest-flag { font-size: 2rem; line-height: 1; vertical-align: middle; }
+.travel-dest-name { font-size: 1.25rem; font-weight: 600; color: #f59e0b; vertical-align: middle; }
+.travel-dest-sub { font-size: 0.8rem; color: var(--text-muted); vertical-align: middle; }
 
 .travel-post .post-header h1 {
   background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
@@ -1239,6 +1242,7 @@ img { max-width: 100%; display: block; }
   font-size: 0.8125rem;
   color: var(--text-muted);
   font-family: var(--font-mono);
+  vertical-align: middle;
 }
 .travel-item-loc {
   display: inline-block;
